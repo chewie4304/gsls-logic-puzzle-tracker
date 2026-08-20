@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -51,7 +52,9 @@
       font-weight: 600;
     }
 
-    .nav-btn:hover { background: var(--primary-hover); }
+    .nav-btn:hover {
+      background: var(--primary-hover);
+    }
 
     .btn-secondary {
       background: #e2e8f0;
@@ -64,7 +67,9 @@
       margin-left: 8px;
     }
 
-    .btn-secondary:hover { background: #cbd5e1; }
+    .btn-secondary:hover {
+      background: #cbd5e1;
+    }
 
     .forgot-link {
       font-size: 13px;
@@ -82,7 +87,10 @@
       margin-bottom: 20px;
     }
 
-    h2 { margin-top: 0; color: #1e293b; }
+    h2 {
+      margin-top: 0;
+      color: #1e293b;
+    }
 
     form {
       display: grid;
@@ -91,7 +99,9 @@
       margin-bottom: 15px;
     }
 
-    input, select, button {
+    input,
+    select,
+    button {
       padding: 8px 12px;
       border: 1px solid var(--border);
       border-radius: 6px;
@@ -126,13 +136,16 @@
       margin-top: 10px;
     }
 
-    th, td {
+    th,
+    td {
       border: 1px solid var(--border);
       padding: 10px;
       text-align: left;
     }
 
-    th { background-color: #f1f5f9; }
+    th {
+      background-color: #f1f5f9;
+    }
 
     .badge {
       display: inline-block;
@@ -142,11 +155,24 @@
       font-weight: bold;
     }
 
-    .badge-avail { background: #dcfce7; color: #15803d; }
-    .badge-unavail { background: #fee2e2; color: #b91c1c; }
-    .badge-pending { background: #fef08a; color: #854d0e; }
+    .badge-avail {
+      background: #dcfce7;
+      color: #15803d;
+    }
 
-    .hidden { display: none !important; }
+    .badge-unavail {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .badge-pending {
+      background: #fef08a;
+      color: #854d0e;
+    }
+
+    .hidden {
+      display: none !important;
+    }
 
     ul.student-list-ui {
       list-style-type: none;
@@ -181,7 +207,9 @@
       padding: 10px 14px;
     }
 
-    details.source-group[open] { background: #ffffff; }
+    details.source-group[open] {
+      background: #ffffff;
+    }
 
     summary.source-title {
       font-weight: bold;
@@ -191,12 +219,17 @@
       color: var(--primary);
     }
 
-    summary.source-title:hover { color: var(--primary-hover); }
+    summary.source-title:hover {
+      color: var(--primary-hover);
+    }
 
     /* Custom Modal System */
     .modal-overlay {
       position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       background: rgba(15, 23, 42, 0.5);
       display: flex;
       align-items: center;
@@ -210,13 +243,23 @@
       border-radius: 8px;
       width: 100%;
       max-width: 420px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
       margin: 0;
       display: block;
     }
 
-    .modal-card h3 { margin-top: 0; margin-bottom: 10px; color: var(--text); }
-    .modal-card p { margin-top: 0; color: #64748b; font-size: 14px; margin-bottom: 15px; }
+    .modal-card h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .modal-card p {
+      margin-top: 0;
+      color: #64748b;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
 
     .modal-card .form-group {
       display: flex;
@@ -239,7 +282,8 @@
 
     /* Sticky First Column Fix for Record Submissions Table */
     #tracker-matrix {
-      border-collapse: separate; /* Stops border bleed-through during horizontal scroll */
+      border-collapse: separate;
+      /* Stops border bleed-through during horizontal scroll */
       border-spacing: 0;
     }
 
@@ -268,536 +312,539 @@
     #tracker-matrix td:first-child {
       background-color: var(--card-bg);
     }
-
   </style>
 </head>
+
 <body>
 
-<div class="container">
-  <header>
-    <h1>🧩 Logic Puzzle Tracker</h1>
-    <div>
-      <span id="role-label" style="font-weight: bold; margin-right: 10px;">Student Mode</span>
-      <button class="nav-btn" onclick="toggleRole()">Switch View</button>
-      <button id="pass-btn" class="btn-secondary hidden" onclick="openChangePasswordModal()">🔑 Password</button>
-      <a id="forgot-btn" class="forgot-link" onclick="sendResetEmail()">Forgot Password?</a>
-    </div>
-  </header>
+  <div class="container">
+    <header>
+      <h1>🧩 Logic Puzzle Tracker</h1>
+      <div>
+        <span id="role-label" style="font-weight: bold; margin-right: 10px;">Student Mode</span>
+        <button class="nav-btn" onclick="toggleRole()">Switch View</button>
+        <button id="pass-btn" class="btn-secondary hidden" onclick="openChangePasswordModal()">🔑 Password</button>
+        <a id="forgot-btn" class="forgot-link" onclick="sendResetEmail()">Forgot Password?</a>
+      </div>
+    </header>
 
-  <!-- TEACHER VIEW -->
-  <div id="teacher-view" class="hidden">
-    <div class="card" style="border-left: 4px solid var(--warning);">
-      <h2>3. Pending Print Requests 🖨️</h2>
-      <p style="font-size:0.9em; color:#64748b;">Requests sent from students asking for a printed copy.</p>
-      <div id="requests-container"></div>
-    </div>
-
-    <div class="card">
-      <h2>1. Add & Manage Logic Puzzles</h2>
-      <form id="puzzle-form" onsubmit="addPuzzle(event)">
-        <input type="text" id="p-site" list="site-list" placeholder="Source Website Name (e.g. Krazy Dad)" required>
-        <datalist id="site-list"></datalist>
-        <input type="text" id="p-title" list="title-list" placeholder="Puzzle Title (e.g. Fill-In #1)" required>
-        <datalist id="title-list"></datalist>
-        <input type="url" id="p-url" placeholder="Puzzle Link (URL)" required>
-        <input type="url" id="p-key" placeholder="Answer Key Link (URL)" required>
-        <button type="submit" class="btn-add">Add Puzzle</button>
-      </form>
-
-      <div id="puzzles-grouped-container"></div>
-    </div>
-
-    <div class="card">
-      <h2>2. Manage Students</h2>
-      <form id="student-form" onsubmit="addStudent(event)">
-        <input type="text" id="s-name" placeholder="Student Name" required>
-        <button type="submit" class="btn-add">Add Student</button>
-      </form>
-      <ul id="students-list" class="student-list-ui"></ul>
-    </div>
-
-    <div class="card">
-      <h2>4. Record Submissions</h2>
-      <p style="font-size:0.9em; color:#64748b;">Select the date a student submitted a puzzle for grading.</p>
-      
-      <!-- Added Search & Filter Controls -->
-      <div style="display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
-        <input type="text" id="matrix-search-student" placeholder="🔍 Filter Students..." oninput="renderAllTeacherData()" style="flex: 1; min-width: 160px;">
-        <input type="text" id="matrix-search-puzzle" placeholder="🔍 Filter Puzzles or Sources..." oninput="renderAllTeacherData()" style="flex: 1; min-width: 160px;">
+    <!-- TEACHER VIEW -->
+    <div id="teacher-view" class="hidden">
+      <div class="card" style="border-left: 4px solid var(--warning);">
+        <h2>3. Pending Print Requests 🖨️</h2>
+        <p style="font-size:0.9em; color:#64748b;">Requests sent from students asking for a printed copy.</p>
+        <div id="requests-container"></div>
       </div>
 
-      <div style="overflow-x: auto;">
-        <table id="tracker-matrix">
-          <thead id="matrix-head"></thead>
-          <tbody id="matrix-body"></tbody>
-        </table>
+      <div class="card">
+        <h2>1. Add & Manage Logic Puzzles</h2>
+        <form id="puzzle-form" onsubmit="addPuzzle(event)">
+          <input type="text" id="p-site" list="site-list" placeholder="Source Website Name (e.g. Krazy Dad)" required>
+          <datalist id="site-list"></datalist>
+          <input type="text" id="p-title" list="title-list" placeholder="Puzzle Title (e.g. Fill-In #1)" required>
+          <datalist id="title-list"></datalist>
+          <input type="url" id="p-url" placeholder="Puzzle Link (URL)" required>
+          <input type="url" id="p-key" placeholder="Answer Key Link (URL)" required>
+          <button type="submit" class="btn-add">Add Puzzle</button>
+        </form>
+
+        <div id="puzzles-grouped-container"></div>
+      </div>
+
+      <div class="card">
+        <h2>2. Manage Students</h2>
+        <form id="student-form" onsubmit="addStudent(event)">
+          <input type="text" id="s-name" placeholder="Student Name" required>
+          <button type="submit" class="btn-add">Add Student</button>
+        </form>
+        <ul id="students-list" class="student-list-ui"></ul>
+      </div>
+
+      <div class="card">
+        <h2>4. Record Submissions</h2>
+        <p style="font-size:0.9em; color:#64748b;">Select the date a student submitted a puzzle for grading.</p>
+
+        <!-- Added Search & Filter Controls -->
+        <div style="display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;">
+          <input type="text" id="matrix-search-student" placeholder="🔍 Filter Students..."
+            oninput="renderAllTeacherData()" style="flex: 1; min-width: 160px;">
+          <input type="text" id="matrix-search-puzzle" placeholder="🔍 Filter Puzzles or Sources..."
+            oninput="renderAllTeacherData()" style="flex: 1; min-width: 160px;">
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table id="tracker-matrix">
+            <thead id="matrix-head"></thead>
+            <tbody id="matrix-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- STUDENT VIEW -->
+    <div id="student-view">
+      <div class="card">
+        <h2>Student Dashboard</h2>
+        <label for="student-select"><strong>Select Your Name: </strong></label>
+        <select id="student-select" onchange="renderStudentDashboard()">
+          <option value="">-- Choose Name --</option>
+        </select>
+      </div>
+
+      <div class="card">
+        <h2>Assigned Puzzles</h2>
+        <div id="student-puzzles-grouped-container"></div>
       </div>
     </div>
   </div>
 
-  <!-- STUDENT VIEW -->
-  <div id="student-view">
-    <div class="card">
-      <h2>Student Dashboard</h2>
-      <label for="student-select"><strong>Select Your Name: </strong></label>
-      <select id="student-select" onchange="renderStudentDashboard()">
-        <option value="">-- Choose Name --</option>
-      </select>
-    </div>
-
-    <div class="card">
-      <h2>Assigned Puzzles</h2>
-      <div id="student-puzzles-grouped-container"></div>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: LOGIN / ACCESS TEACHER MODE -->
-<div id="login-modal" class="modal-overlay hidden">
-  <form class="modal-card" onsubmit="event.preventDefault(); submitTeacherLogin();">
-    <h3>🔒 Teacher Access</h3>
-    <p>Please enter the teacher password to continue:</p>
-    <div class="form-group">
-      <input type="password" id="login-pass-input" placeholder="Teacher Password">
-    </div>
-    <div class="modal-actions">
-      <button type="button" class="btn-secondary" onclick="closeModal('login-modal')">Cancel</button>
-      <button type="submit" class="btn-add">Login</button>
-    </div>
-  </form>
-</div>
-
-<!-- MODAL: CHANGE PASSWORD -->
-<div id="password-modal" class="modal-overlay hidden">
-  <form class="modal-card" onsubmit="event.preventDefault(); submitPasswordChange();">
-    <h3>🔑 Change Password</h3>
-    <div class="form-group">
-      <input type="password" id="curr-pass-input" placeholder="Current Password">
-      <input type="password" id="new-pass-input" placeholder="New Password">
-    </div>
-    <div class="modal-actions">
-      <button type="button" class="btn-secondary" onclick="closeModal('password-modal')">Cancel</button>
-      <button type="submit" class="btn-add">Save</button>
-    </div>
-  </form>
-</div>
-
-<!-- MODAL: EDIT PUZZLE -->
-<div id="edit-puzzle-modal" class="modal-overlay hidden">
-  <form class="modal-card" onsubmit="event.preventDefault(); savePuzzleEdit();">
-    <h3>✏️ Edit Puzzle</h3>
-    <div class="form-group">
-      <label>Source Website</label>
-      <input type="text" id="edit-p-site">
-      <label>Title</label>
-      <input type="text" id="edit-p-title">
-      <label>Puzzle URL</label>
-      <input type="url" id="edit-p-url">
-      <label>Answer Key URL</label>
-      <input type="url" id="edit-p-key">
-    </div>
-    <div class="modal-actions">
-      <button type="button" class="btn-secondary" onclick="closeModal('edit-puzzle-modal')">Cancel</button>
-      <button type="submit" class="btn-add">Save Changes</button>
-    </div>
-  </form>
-</div>
-
-<!-- MODAL: EDIT STUDENT -->
-<div id="edit-student-modal" class="modal-overlay hidden">
-  <form class="modal-card" onsubmit="event.preventDefault(); saveStudentEdit();">
-    <h3>✏️ Edit Student</h3>
-    <div class="form-group">
-      <label>Student Name</label>
-      <input type="text" id="edit-s-name">
-    </div>
-    <div class="modal-actions">
-      <button type="button" class="btn-secondary" onclick="closeModal('edit-student-modal')">Cancel</button>
-      <button type="submit" class="btn-add">Save</button>
-    </div>
-  </form>
-</div>
-
-<!-- MODAL: CONFIRMATION ACTION -->
-<div id="confirm-modal" class="modal-overlay hidden">
-  <div class="modal-card">
-    <h3 id="confirm-title">Are you sure?</h3>
-    <p id="confirm-msg"></p>
-    <div class="modal-actions">
-      <button type="button" class="btn-secondary" onclick="closeModal('confirm-modal')">Cancel</button>
-      <button type="button" class="btn-add" id="confirm-action-btn" style="background-color: var(--danger);">Confirm</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: NOTIFICATION ALERT -->
-<div id="alert-modal" class="modal-overlay hidden">
-  <div class="modal-card">
-    <h3 id="alert-title">Notice</h3>
-    <p id="alert-msg"></p>
-    <div class="modal-actions">
-      <button type="button" class="btn-add" id="alert-ok-btn" onclick="closeModal('alert-modal')">OK</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL: PRINT REQUEST RESOURCE CHECK -->
-<div id="print-check-modal" class="modal-overlay hidden">
-  <div class="modal-card">
-    <div id="print-step-1">
-      <h3>📁 Resource Folders Check</h3>
-      <p>Have you checked the physical resource folders first to see if a copy is already printed?</p>
+  <!-- MODAL: LOGIN / ACCESS TEACHER MODE -->
+  <div id="login-modal" class="modal-overlay hidden">
+    <form class="modal-card" onsubmit="event.preventDefault(); submitTeacherLogin();">
+      <h3>🔒 Teacher Access</h3>
+      <p>Please enter the teacher password to continue:</p>
+      <div class="form-group">
+        <input type="password" id="login-pass-input" placeholder="Teacher Password">
+      </div>
       <div class="modal-actions">
-        <button type="button" class="btn-secondary" onclick="showPrintStep2()">No</button>
-        <button type="button" class="btn-add" onclick="confirmPrintRequest()">Yes</button>
+        <button type="button" class="btn-secondary" onclick="closeModal('login-modal')">Cancel</button>
+        <button type="submit" class="btn-add">Login</button>
       </div>
-    </div>
-    <div id="print-step-2" class="hidden">
-      <h3>🔍 Check Folders First</h3>
-      <p>Please go check the physical resource folders now! Did you find a printed copy?</p>
+    </form>
+  </div>
+
+  <!-- MODAL: CHANGE PASSWORD -->
+  <div id="password-modal" class="modal-overlay hidden">
+    <form class="modal-card" onsubmit="event.preventDefault(); submitPasswordChange();">
+      <h3>🔑 Change Password</h3>
+      <div class="form-group">
+        <input type="password" id="curr-pass-input" placeholder="Current Password">
+        <input type="password" id="new-pass-input" placeholder="New Password">
+      </div>
       <div class="modal-actions">
-        <button type="button" class="btn-secondary" onclick="closeModal('print-check-modal')">Found 😊</button>
-        <button type="button" class="btn-add" onclick="confirmPrintRequest()">Not Found 🖨️</button>
+        <button type="button" class="btn-secondary" onclick="closeModal('password-modal')">Cancel</button>
+        <button type="submit" class="btn-add">Save</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- MODAL: EDIT PUZZLE -->
+  <div id="edit-puzzle-modal" class="modal-overlay hidden">
+    <form class="modal-card" onsubmit="event.preventDefault(); savePuzzleEdit();">
+      <h3>✏️ Edit Puzzle</h3>
+      <div class="form-group">
+        <label>Source Website</label>
+        <input type="text" id="edit-p-site">
+        <label>Title</label>
+        <input type="text" id="edit-p-title">
+        <label>Puzzle URL</label>
+        <input type="url" id="edit-p-url">
+        <label>Answer Key URL</label>
+        <input type="url" id="edit-p-key">
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeModal('edit-puzzle-modal')">Cancel</button>
+        <button type="submit" class="btn-add">Save Changes</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- MODAL: EDIT STUDENT -->
+  <div id="edit-student-modal" class="modal-overlay hidden">
+    <form class="modal-card" onsubmit="event.preventDefault(); saveStudentEdit();">
+      <h3>✏️ Edit Student</h3>
+      <div class="form-group">
+        <label>Student Name</label>
+        <input type="text" id="edit-s-name">
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeModal('edit-student-modal')">Cancel</button>
+        <button type="submit" class="btn-add">Save</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- MODAL: CONFIRMATION ACTION -->
+  <div id="confirm-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <h3 id="confirm-title">Are you sure?</h3>
+      <p id="confirm-msg"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeModal('confirm-modal')">Cancel</button>
+        <button type="button" class="btn-add" id="confirm-action-btn"
+          style="background-color: var(--danger);">Confirm</button>
       </div>
     </div>
   </div>
-</div>
 
-<script>
-  let puzzles = JSON.parse(localStorage.getItem('puzzles')) || [];
-  let students = JSON.parse(localStorage.getItem('students')) || [];
-  let records = JSON.parse(localStorage.getItem('records')) || {};
-  let requests = JSON.parse(localStorage.getItem('requests')) || {};
-  let teacherPassword = localStorage.getItem('teacherPassword') || '1234';
+  <!-- MODAL: NOTIFICATION ALERT -->
+  <div id="alert-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <h3 id="alert-title">Notice</h3>
+      <p id="alert-msg"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn-add" id="alert-ok-btn" onclick="closeModal('alert-modal')">OK</button>
+      </div>
+    </div>
+  </div>
 
-  let isTeacherMode = false;
-  let activeEditId = null;
+  <!-- MODAL: PRINT REQUEST RESOURCE CHECK -->
+  <div id="print-check-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div id="print-step-1">
+        <h3>📁 Resource Folders Check</h3>
+        <p>Have you checked the physical resource folders first to see if a copy is already printed?</p>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="showPrintStep2()">No</button>
+          <button type="button" class="btn-add" onclick="confirmPrintRequest()">Yes</button>
+        </div>
+      </div>
+      <div id="print-step-2" class="hidden">
+        <h3>🔍 Check Folders First</h3>
+        <p>Please go check the physical resource folders now! Did you find a printed copy?</p>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal('print-check-modal')">Found 😊</button>
+          <button type="button" class="btn-add" onclick="confirmPrintRequest()">Not Found 🖨️</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  function saveData() {
-    localStorage.setItem('puzzles', JSON.stringify(puzzles));
-    localStorage.setItem('students', JSON.stringify(students));
-    localStorage.setItem('records', JSON.stringify(records));
-    localStorage.setItem('requests', JSON.stringify(requests));
-    localStorage.setItem('teacherPassword', teacherPassword);
-  }
+  <script>
+    let puzzles = JSON.parse(localStorage.getItem('puzzles')) || [];
+    let students = JSON.parse(localStorage.getItem('students')) || [];
+    let records = JSON.parse(localStorage.getItem('records')) || {};
+    let requests = JSON.parse(localStorage.getItem('requests')) || {};
+    let teacherPassword = localStorage.getItem('teacherPassword') || '1234';
 
-  // --- MODAL HELPER FUNCTIONS ---
-  function openModal(id) {
-    const modal = document.getElementById(id);
-    modal.classList.remove('hidden');
+    let isTeacherMode = false;
+    let activeEditId = null;
 
-    setTimeout(() => {
-      const target = modal.querySelector('input, button[type="submit"], #confirm-action-btn, #alert-ok-btn');
-      if (target) {
-        target.focus();
-        if (target.tagName === 'INPUT' && target.type === 'text') {
-          target.select();
-        }
-      }
-    }, 50);
-  }
-
-  function closeModal(id) {
-    document.getElementById(id).classList.add('hidden');
-  }
-
-  function showAlert(title, message) {
-    document.getElementById('alert-title').innerText = title;
-    document.getElementById('alert-msg').innerText = message;
-    openModal('alert-modal');
-  }
-
-  function showConfirm(title, message, onConfirm, btnText = "Confirm") {
-    document.getElementById('confirm-title').innerText = title;
-    document.getElementById('confirm-msg').innerText = message;
-    const actionBtn = document.getElementById('confirm-action-btn');
-    actionBtn.innerText = btnText;
-    actionBtn.onclick = function() {
-      onConfirm();
-      closeModal('confirm-modal');
-    };
-    openModal('confirm-modal');
-  }
-
-  function sendResetEmail() {
-    const subject = encodeURIComponent("Logic Puzzle Tracker - Password Reset Request");
-    const body = encodeURIComponent("Hello,\n\nA request has been submitted to reset the Teacher Mode password for the Logic Puzzle Tracker.");
-    window.location.href = `mailto:nbladow@gslschool-et.org?subject=${subject}&body=${body}`;
-  }
-
-  function toggleRole() {
-    if (!isTeacherMode) {
-      document.getElementById('login-pass-input').value = '';
-      openModal('login-modal');
-    } else {
-      isTeacherMode = false;
-      updateViewUI();
+    function saveData() {
+      localStorage.setItem('puzzles', JSON.stringify(puzzles));
+      localStorage.setItem('students', JSON.stringify(students));
+      localStorage.setItem('records', JSON.stringify(records));
+      localStorage.setItem('requests', JSON.stringify(requests));
+      localStorage.setItem('teacherPassword', teacherPassword);
     }
-  }
 
-  function submitTeacherLogin() {
-    const input = document.getElementById('login-pass-input').value;
-    closeModal('login-modal');
+    // --- MODAL HELPER FUNCTIONS ---
+    function openModal(id) {
+      const modal = document.getElementById(id);
+      modal.classList.remove('hidden');
 
-    if (input === teacherPassword) {
-      isTeacherMode = true;
-      updateViewUI();
-    } else {
+      setTimeout(() => {
+        const target = modal.querySelector('input, button[type="submit"], #confirm-action-btn, #alert-ok-btn');
+        if (target) {
+          target.focus();
+          if (target.tagName === 'INPUT' && target.type === 'text') {
+            target.select();
+          }
+        }
+      }, 50);
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    function showAlert(title, message) {
+      document.getElementById('alert-title').innerText = title;
+      document.getElementById('alert-msg').innerText = message;
+      openModal('alert-modal');
+    }
+
+    function showConfirm(title, message, onConfirm, btnText = "Confirm") {
+      document.getElementById('confirm-title').innerText = title;
+      document.getElementById('confirm-msg').innerText = message;
+      const actionBtn = document.getElementById('confirm-action-btn');
+      actionBtn.innerText = btnText;
+      actionBtn.onclick = function () {
+        onConfirm();
+        closeModal('confirm-modal');
+      };
+      openModal('confirm-modal');
+    }
+
+    function sendResetEmail() {
+      const subject = encodeURIComponent("Logic Puzzle Tracker - Password Reset Request");
+      const body = encodeURIComponent("Hello,\n\nA request has been submitted to reset the Teacher Mode password for the Logic Puzzle Tracker.");
+      window.location.href = `mailto:nbladow@gslschool-et.org?subject=${subject}&body=${body}`;
+    }
+
+    function toggleRole() {
+      if (!isTeacherMode) {
+        document.getElementById('login-pass-input').value = '';
+        openModal('login-modal');
+      } else {
+        isTeacherMode = false;
+        updateViewUI();
+      }
+    }
+
+    function submitTeacherLogin() {
+      const input = document.getElementById('login-pass-input').value;
+      closeModal('login-modal');
+
+      if (input === teacherPassword) {
+        isTeacherMode = true;
+        updateViewUI();
+      } else {
+        showConfirm(
+          "Incorrect Password",
+          "Would you like to send a password reset request email to nbladow@gslschool-et.org?",
+          sendResetEmail,
+          "Send Email"
+        );
+      }
+    }
+
+    function openChangePasswordModal() {
+      document.getElementById('curr-pass-input').value = '';
+      document.getElementById('new-pass-input').value = '';
+      openModal('password-modal');
+    }
+
+    function submitPasswordChange() {
+      const currentInput = document.getElementById('curr-pass-input').value;
+      const newPass = document.getElementById('new-pass-input').value;
+
+      if (currentInput !== teacherPassword) {
+        closeModal('password-modal');
+        showAlert("Error", "Incorrect current password.");
+        return;
+      }
+
+      if (newPass && newPass.trim() !== "") {
+        teacherPassword = newPass.trim();
+        saveData();
+        closeModal('password-modal');
+        showAlert("Success", "Password updated successfully!");
+      } else {
+        showAlert("Error", "Please enter a valid new password.");
+      }
+    }
+
+    function updateViewUI() {
+      document.getElementById('role-label').innerText = isTeacherMode ? "Teacher Mode" : "Student Mode";
+      document.getElementById('teacher-view').classList.toggle('hidden', !isTeacherMode);
+      document.getElementById('student-view').classList.toggle('hidden', isTeacherMode);
+      document.getElementById('pass-btn').classList.toggle('hidden', !isTeacherMode);
+      document.getElementById('forgot-btn').classList.toggle('hidden', isTeacherMode);
+
+      if (!isTeacherMode) {
+        populateStudentDropdown();
+        renderStudentDashboard();
+      } else {
+        renderAllTeacherData();
+      }
+    }
+
+    function getPuzzlesBySource(puzzleList) {
+      return puzzleList.reduce((acc, p) => {
+        const siteName = (p.site && p.site.trim()) ? p.site.trim() : 'Uncategorized';
+        if (!acc[siteName]) acc[siteName] = [];
+        acc[siteName].push(p);
+        return acc;
+      }, {});
+    }
+
+    // --- TEACHER FUNCTIONS ---
+    function addPuzzle(e) {
+      e.preventDefault();
+      const newPuzzle = {
+        id: Date.now(),
+        title: document.getElementById('p-title').value,
+        site: document.getElementById('p-site').value,
+        url: document.getElementById('p-url').value,
+        keyUrl: document.getElementById('p-key').value,
+        available: true
+      };
+      puzzles.push(newPuzzle);
+      saveData();
+      document.getElementById('puzzle-form').reset();
+      renderAllTeacherData();
+    }
+
+    function togglePuzzleAvailability(id) {
+      puzzles = puzzles.map(p => p.id === id ? {...p, available: !p.available} : p);
+      saveData();
+      renderAllTeacherData();
+    }
+
+    function editPuzzle(id) {
+      const p = puzzles.find(item => item.id === id);
+      if (!p) return;
+
+      activeEditId = id;
+      document.getElementById('edit-p-title').value = p.title;
+      document.getElementById('edit-p-site').value = p.site;
+      document.getElementById('edit-p-url').value = p.url;
+      document.getElementById('edit-p-key').value = p.keyUrl;
+
+      openModal('edit-puzzle-modal');
+    }
+
+    function savePuzzleEdit() {
+      const p = puzzles.find(item => item.id === activeEditId);
+      if (!p) return;
+
+      p.title = document.getElementById('edit-p-title').value.trim() || p.title;
+      p.site = document.getElementById('edit-p-site').value.trim() || p.site;
+      p.url = document.getElementById('edit-p-url').value.trim() || p.url;
+      p.keyUrl = document.getElementById('edit-p-key').value.trim() || p.keyUrl;
+
+      saveData();
+      closeModal('edit-puzzle-modal');
+      renderAllTeacherData();
+    }
+
+    function duplicatePuzzle(id) {
+      const original = puzzles.find(item => item.id === id);
+      if (!original) return;
+
+      // Create a copy with a new ID
+      const newPuzzle = {
+        id: Date.now(),
+        title: `${original.title} (Copy)`,
+        site: original.site,
+        url: original.url,
+        keyUrl: original.keyUrl,
+        available: original.available
+      };
+
+      puzzles.push(newPuzzle);
+      saveData();
+      renderAllTeacherData();
+
+      // Immediately open the edit modal for the duplicated puzzle
+      editPuzzle(newPuzzle.id);
+    }
+
+    function deletePuzzle(id) {
       showConfirm(
-        "Incorrect Password",
-        "Would you like to send a password reset request email to nbladow@gslschool-et.org?",
-        sendResetEmail,
-        "Send Email"
+        "Delete Puzzle",
+        "Are you sure you want to delete this puzzle? Recorded submissions for this puzzle will also be removed.",
+        function () {
+          puzzles = puzzles.filter(p => p.id !== id);
+          Object.keys(records).forEach(key => {if (key.endsWith(`_${id}`)) delete records[key];});
+          Object.keys(requests).forEach(key => {if (key.endsWith(`_${id}`)) delete requests[key];});
+          saveData();
+          renderAllTeacherData();
+        },
+        "Delete"
       );
     }
-  }
 
-  function openChangePasswordModal() {
-    document.getElementById('curr-pass-input').value = '';
-    document.getElementById('new-pass-input').value = '';
-    openModal('password-modal');
-  }
-
-  function submitPasswordChange() {
-    const currentInput = document.getElementById('curr-pass-input').value;
-    const newPass = document.getElementById('new-pass-input').value;
-
-    if (currentInput !== teacherPassword) {
-      closeModal('password-modal');
-      showAlert("Error", "Incorrect current password.");
-      return;
-    }
-
-    if (newPass && newPass.trim() !== "") {
-      teacherPassword = newPass.trim();
+    function addStudent(e) {
+      e.preventDefault();
+      const name = document.getElementById('s-name').value;
+      students.push({id: Date.now(), name: name});
       saveData();
-      closeModal('password-modal');
-      showAlert("Success", "Password updated successfully!");
-    } else {
-      showAlert("Error", "Please enter a valid new password.");
-    }
-  }
-
-  function updateViewUI() {
-    document.getElementById('role-label').innerText = isTeacherMode ? "Teacher Mode" : "Student Mode";
-    document.getElementById('teacher-view').classList.toggle('hidden', !isTeacherMode);
-    document.getElementById('student-view').classList.toggle('hidden', isTeacherMode);
-    document.getElementById('pass-btn').classList.toggle('hidden', !isTeacherMode);
-    document.getElementById('forgot-btn').classList.toggle('hidden', isTeacherMode);
-
-    if (!isTeacherMode) {
-      populateStudentDropdown();
-      renderStudentDashboard();
-    } else {
+      document.getElementById('student-form').reset();
       renderAllTeacherData();
     }
-  }
 
-  function getPuzzlesBySource(puzzleList) {
-    return puzzleList.reduce((acc, p) => {
-      const siteName = (p.site && p.site.trim()) ? p.site.trim() : 'Uncategorized';
-      if (!acc[siteName]) acc[siteName] = [];
-      acc[siteName].push(p);
-      return acc;
-    }, {});
-  }
+    function editStudent(id) {
+      const student = students.find(s => s.id === id);
+      if (!student) return;
 
-  // --- TEACHER FUNCTIONS ---
-  function addPuzzle(e) {
-    e.preventDefault();
-    const newPuzzle = {
-      id: Date.now(),
-      title: document.getElementById('p-title').value,
-      site: document.getElementById('p-site').value,
-      url: document.getElementById('p-url').value,
-      keyUrl: document.getElementById('p-key').value,
-      available: true
-    };
-    puzzles.push(newPuzzle);
-    saveData();
-    document.getElementById('puzzle-form').reset();
-    renderAllTeacherData();
-  }
+      activeEditId = id;
+      document.getElementById('edit-s-name').value = student.name;
+      openModal('edit-student-modal');
+    }
 
-  function togglePuzzleAvailability(id) {
-    puzzles = puzzles.map(p => p.id === id ? { ...p, available: !p.available } : p);
-    saveData();
-    renderAllTeacherData();
-  }
+    function saveStudentEdit() {
+      const student = students.find(s => s.id === activeEditId);
+      if (!student) return;
 
-  function editPuzzle(id) {
-    const p = puzzles.find(item => item.id === id);
-    if (!p) return;
-
-    activeEditId = id;
-    document.getElementById('edit-p-title').value = p.title;
-    document.getElementById('edit-p-site').value = p.site;
-    document.getElementById('edit-p-url').value = p.url;
-    document.getElementById('edit-p-key').value = p.keyUrl;
-
-    openModal('edit-puzzle-modal');
-  }
-
-  function savePuzzleEdit() {
-    const p = puzzles.find(item => item.id === activeEditId);
-    if (!p) return;
-
-    p.title = document.getElementById('edit-p-title').value.trim() || p.title;
-    p.site = document.getElementById('edit-p-site').value.trim() || p.site;
-    p.url = document.getElementById('edit-p-url').value.trim() || p.url;
-    p.keyUrl = document.getElementById('edit-p-key').value.trim() || p.keyUrl;
-
-    saveData();
-    closeModal('edit-puzzle-modal');
-    renderAllTeacherData();
-  }
-
-function duplicatePuzzle(id) {
-    const original = puzzles.find(item => item.id === id);
-    if (!original) return;
-
-    // Create a copy with a new ID
-    const newPuzzle = {
-      id: Date.now(),
-      title: `${original.title} (Copy)`,
-      site: original.site,
-      url: original.url,
-      keyUrl: original.keyUrl,
-      available: original.available
-    };
-
-    puzzles.push(newPuzzle);
-    saveData();
-    renderAllTeacherData();
-
-    // Immediately open the edit modal for the duplicated puzzle
-    editPuzzle(newPuzzle.id);
-  }
-
-  function deletePuzzle(id) {
-    showConfirm(
-      "Delete Puzzle",
-      "Are you sure you want to delete this puzzle? Recorded submissions for this puzzle will also be removed.",
-      function() {
-        puzzles = puzzles.filter(p => p.id !== id);
-        Object.keys(records).forEach(key => { if (key.endsWith(`_${id}`)) delete records[key]; });
-        Object.keys(requests).forEach(key => { if (key.endsWith(`_${id}`)) delete requests[key]; });
+      const newName = document.getElementById('edit-s-name').value.trim();
+      if (newName) {
+        student.name = newName;
         saveData();
+        closeModal('edit-student-modal');
         renderAllTeacherData();
-      },
-      "Delete"
-    );
-  }
+      }
+    }
 
-  function addStudent(e) {
-    e.preventDefault();
-    const name = document.getElementById('s-name').value;
-    students.push({ id: Date.now(), name: name });
-    saveData();
-    document.getElementById('student-form').reset();
-    renderAllTeacherData();
-  }
+    function deleteStudent(id) {
+      showConfirm(
+        "Delete Student",
+        "Are you sure you want to delete this student? Their submission history will also be removed.",
+        function () {
+          students = students.filter(s => s.id !== id);
+          Object.keys(records).forEach(key => {if (key.startsWith(`${id}_`)) delete records[key];});
+          Object.keys(requests).forEach(key => {if (key.startsWith(`${id}_`)) delete requests[key];});
+          saveData();
+          renderAllTeacherData();
+        },
+        "Delete"
+      );
+    }
 
-  function editStudent(id) {
-    const student = students.find(s => s.id === id);
-    if (!student) return;
-
-    activeEditId = id;
-    document.getElementById('edit-s-name').value = student.name;
-    openModal('edit-student-modal');
-  }
-
-  function saveStudentEdit() {
-    const student = students.find(s => s.id === activeEditId);
-    if (!student) return;
-
-    const newName = document.getElementById('edit-s-name').value.trim();
-    if (newName) {
-      student.name = newName;
+    function fulfillRequest(studentId, puzzleId) {
+      const key = `${studentId}_${puzzleId}`;
+      delete requests[key];
       saveData();
-      closeModal('edit-student-modal');
       renderAllTeacherData();
     }
-  }
 
-  function deleteStudent(id) {
-    showConfirm(
-      "Delete Student",
-      "Are you sure you want to delete this student? Their submission history will also be removed.",
-      function() {
-        students = students.filter(s => s.id !== id);
-        Object.keys(records).forEach(key => { if (key.startsWith(`${id}_`)) delete records[key]; });
-        Object.keys(requests).forEach(key => { if (key.startsWith(`${id}_`)) delete requests[key]; });
-        saveData();
-        renderAllTeacherData();
-      },
-      "Delete"
-    );
-  }
-
-  function fulfillRequest(studentId, puzzleId) {
-    const key = `${studentId}_${puzzleId}`;
-    delete requests[key];
-    saveData();
-    renderAllTeacherData();
-  }
-
-  function updateRecordDate(studentId, puzzleId, dateValue) {
-    const key = `${studentId}_${puzzleId}`;
-    if (dateValue) {
-      records[key] = dateValue;
-    } else {
-      delete records[key];
-    }
-    saveData();
-    renderAllTeacherData();
-  }
-
-  function renderAllTeacherData() {
-    // Safe & Alphabetized Auto-Complete for Source Website
-    const siteList = document.getElementById('site-list');
-    if (siteList) {
-      const uniqueSites = [...new Set(puzzles.map(p => (p.site || '').trim()).filter(Boolean))];
-      uniqueSites.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
-      siteList.innerHTML = uniqueSites.map(site => `<option value="${site}">`).join('');
+    function updateRecordDate(studentId, puzzleId, dateValue) {
+      const key = `${studentId}_${puzzleId}`;
+      if (dateValue) {
+        records[key] = dateValue;
+      } else {
+        delete records[key];
+      }
+      saveData();
+      renderAllTeacherData();
     }
 
-    // Safe & Alphabetized Auto-Complete for Puzzle Title (Sorted by Source first, then Title)
-    const titleList = document.getElementById('title-list');
-    if (titleList) {
-      const uniquePairs = [];
-      const seen = new Set();
+    function renderAllTeacherData() {
+      // Safe & Alphabetized Auto-Complete for Source Website
+      const siteList = document.getElementById('site-list');
+      if (siteList) {
+        const uniqueSites = [...new Set(puzzles.map(p => (p.site || '').trim()).filter(Boolean))];
+        uniqueSites.sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
+        siteList.innerHTML = uniqueSites.map(site => `<option value="${site}">`).join('');
+      }
 
-      puzzles.forEach(p => {
-        const site = (p.site || '').trim();
-        const title = (p.title || '').trim();
-        const key = `${site.toLowerCase()}|||${title.toLowerCase()}`;
+      // Safe & Alphabetized Auto-Complete for Puzzle Title (Sorted by Source first, then Title)
+      const titleList = document.getElementById('title-list');
+      if (titleList) {
+        const uniquePairs = [];
+        const seen = new Set();
 
-        if (title && !seen.has(key)) {
-          seen.add(key);
-          uniquePairs.push({ site, title });
-        }
-      });
+        puzzles.forEach(p => {
+          const site = (p.site || '').trim();
+          const title = (p.title || '').trim();
+          const key = `${site.toLowerCase()}|||${title.toLowerCase()}`;
 
-      // Sort by Source Website first; if sources match, sort by Title
-      uniquePairs.sort((a, b) => {
-        const siteCompare = a.site.localeCompare(b.site, undefined, { sensitivity: 'base' });
-        if (siteCompare !== 0) return siteCompare;
-        return a.title.localeCompare(b.title, undefined, { sensitivity: 'base' });
-      });
+          if (title && !seen.has(key)) {
+            seen.add(key);
+            uniquePairs.push({site, title});
+          }
+        });
 
-      titleList.innerHTML = uniquePairs
-        .map(p => `<option value="${p.title}" label="${p.site}">${p.site}</option>`)
-        .join('');
-    }
+        // Sort by Source Website first; if sources match, sort by Title
+        uniquePairs.sort((a, b) => {
+          const siteCompare = a.site.localeCompare(b.site, undefined, {sensitivity: 'base'});
+          if (siteCompare !== 0) return siteCompare;
+          return a.title.localeCompare(b.title, undefined, {sensitivity: 'base'});
+        });
 
-    const reqContainer = document.getElementById('requests-container');
-    const reqKeys = Object.keys(requests);
+        titleList.innerHTML = uniquePairs
+          .map(p => `<option value="${p.title}" label="${p.site}">${p.site}</option>`)
+          .join('');
+      }
 
-    if (reqKeys.length === 0) {
-      reqContainer.innerHTML = '<p style="color:#64748b; font-style:italic; margin:0;">No pending print requests.</p>';
-    } else {
-      reqContainer.innerHTML = `
+      const reqContainer = document.getElementById('requests-container');
+      const reqKeys = Object.keys(requests);
+
+      if (reqKeys.length === 0) {
+        reqContainer.innerHTML = '<p style="color:#64748b; font-style:italic; margin:0;">No pending print requests.</p>';
+      } else {
+        reqContainer.innerHTML = `
         <table>
           <thead>
             <tr>
@@ -811,11 +858,11 @@ function duplicatePuzzle(id) {
           </thead>
           <tbody>
             ${reqKeys.map(key => {
-              const [sId, pId] = key.split('_');
-              const student = students.find(s => s.id == sId);
-              const puzzle = puzzles.find(p => p.id == pId);
-              if (!student || !puzzle) return '';
-              return `
+          const [sId, pId] = key.split('_');
+          const student = students.find(s => s.id == sId);
+          const puzzle = puzzles.find(p => p.id == pId);
+          if (!student || !puzzle) return '';
+          return `
                 <tr>
                   <td><strong>${student.name}</strong></td>
                   <td>${puzzle.site}</td>
@@ -830,20 +877,20 @@ function duplicatePuzzle(id) {
                   </td>
                 </tr>
               `;
-            }).join('')}
+        }).join('')}
           </tbody>
         </table>
       `;
-    }
+      }
 
-    const pContainer = document.getElementById('puzzles-grouped-container');
-    const grouped = getPuzzlesBySource(puzzles);
-    const sites = Object.keys(grouped).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
-    
-    if (sites.length === 0) {
-      pContainer.innerHTML = '<p style="color:#64748b; font-style:italic;">No puzzles added yet.</p>';
-    } else {
-      pContainer.innerHTML = sites.map(site => `
+      const pContainer = document.getElementById('puzzles-grouped-container');
+      const grouped = getPuzzlesBySource(puzzles);
+      const sites = Object.keys(grouped).sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
+
+      if (sites.length === 0) {
+        pContainer.innerHTML = '<p style="color:#64748b; font-style:italic;">No puzzles added yet.</p>';
+      } else {
+        pContainer.innerHTML = sites.map(site => `
         <details class="source-group">
           <summary class="source-title">🌐 Source: ${site} (${grouped[site].length})</summary>
           <table>
@@ -857,9 +904,9 @@ function duplicatePuzzle(id) {
             </thead>
             <tbody>
               ${grouped[site]
-                .slice()
-                .sort((a, b) => (a.title || '').localeCompare(b.title || '', undefined, { numeric: true, sensitivity: 'base' }))
-                .map(p => `
+            .slice()
+            .sort((a, b) => (a.title || '').localeCompare(b.title || '', undefined, {numeric: true, sensitivity: 'base'}))
+            .map(p => `
                 <tr>
                   <td><strong>${p.title}</strong></td>
                   <td>
@@ -882,10 +929,10 @@ function duplicatePuzzle(id) {
           </table>
         </details>
       `).join('');
-    }
+      }
 
-    const sList = document.getElementById('students-list');
-    sList.innerHTML = students.map(s => `
+      const sList = document.getElementById('students-list');
+      sList.innerHTML = students.map(s => `
       <li>
         <strong>${s.name}</strong>
         <div>
@@ -895,160 +942,194 @@ function duplicatePuzzle(id) {
       </li>
     `).join('');
 
-    const mHead = document.getElementById('matrix-head');
-    const mBody = document.getElementById('matrix-body');
+      const mHead = document.getElementById('matrix-head');
+      const mBody = document.getElementById('matrix-body');
 
-    // 1. Alphabetize Students (A-Z)
-    const sortedStudents = [...students].sort((a, b) => 
-      (a.name || '').localeCompare(b.name || '', undefined, { sensitivity: 'base' })
-    );
+      // 1. Alphabetize Students (A-Z)
+      const sortedStudents = [...students].sort((a, b) =>
+        (a.name || '').localeCompare(b.name || '', undefined, {sensitivity: 'base'})
+      );
 
-    // 2. Alphabetize Puzzles (by Source first, then Title numerically)
-    const sortedPuzzles = [...puzzles].sort((a, b) => {
-      const siteCompare = (a.site || '').localeCompare(b.site || '', undefined, { sensitivity: 'base' });
-      if (siteCompare !== 0) return siteCompare;
-      return (a.title || '').localeCompare(b.title || '', undefined, { numeric: true, sensitivity: 'base' });
-    });
+      // 2. Alphabetize Puzzles (by Source first, then Title numerically)
+      const sortedPuzzles = [...puzzles].sort((a, b) => {
+        const siteCompare = (a.site || '').localeCompare(b.site || '', undefined, {sensitivity: 'base'});
+        if (siteCompare !== 0) return siteCompare;
+        return (a.title || '').localeCompare(b.title || '', undefined, {numeric: true, sensitivity: 'base'});
+      });
 
-    // 3. Filter by search queries
-    const studentQuery = (document.getElementById('matrix-search-student')?.value || '').toLowerCase().trim();
-    const puzzleQuery = (document.getElementById('matrix-search-puzzle')?.value || '').toLowerCase().trim();
+      // 3. Filter by search queries
+      const studentQuery = (document.getElementById('matrix-search-student')?.value || '').toLowerCase().trim();
+      const puzzleQuery = (document.getElementById('matrix-search-puzzle')?.value || '').toLowerCase().trim();
 
-    const filteredStudents = sortedStudents.filter(s => (s.name || '').toLowerCase().includes(studentQuery));
-    const filteredPuzzles = sortedPuzzles.filter(p => 
-      (p.title || '').toLowerCase().includes(puzzleQuery) || 
-      (p.site || '').toLowerCase().includes(puzzleQuery)
-    );
+      const filteredStudents = sortedStudents.filter(s => (s.name || '').toLowerCase().includes(studentQuery));
+      const filteredPuzzles = sortedPuzzles.filter(p =>
+        (p.title || '').toLowerCase().includes(puzzleQuery) ||
+        (p.site || '').toLowerCase().includes(puzzleQuery)
+      );
 
-    // 4. Render Table Header
-    if (filteredPuzzles.length === 0) {
-      mHead.innerHTML = `<tr><th>Student</th><th style="color:#64748b; font-style:italic;">No matching puzzles</th></tr>`;
-    } else {
-      mHead.innerHTML = `
+      // 4. Render Table Header
+      if (filteredPuzzles.length === 0) {
+        mHead.innerHTML = `<tr><th>Student</th><th style="color:#64748b; font-style:italic;">No matching puzzles</th></tr>`;
+      } else {
+        mHead.innerHTML = `
         <tr>
           <th>Student</th>
           ${filteredPuzzles.map(p => `<th>${p.title}<br><small style="font-weight:normal; color:#64748b;">(${p.site})</small></th>`).join('')}
         </tr>
       `;
-    }
+      }
 
-    // 5. Render Table Body
-    if (filteredStudents.length === 0) {
-      mBody.innerHTML = `<tr><td colspan="${filteredPuzzles.length + 1}" style="color:#64748b; font-style:italic;">No matching students found.</td></tr>`;
-    } else {
-      mBody.innerHTML = filteredStudents.map(s => `
+      // 5. Render Table Body
+      if (filteredStudents.length === 0) {
+        mBody.innerHTML = `<tr><td colspan="${filteredPuzzles.length + 1}" style="color:#64748b; font-style:italic;">No matching students found.</td></tr>`;
+      } else {
+        mBody.innerHTML = filteredStudents.map(s => `
         <tr>
           <td><strong>${s.name}</strong></td>
           ${filteredPuzzles.map(p => {
-            const recKey = `${s.id}_${p.id}`;
-            const currentDate = records[recKey] || '';
-            return `
+          const recKey = `${s.id}_${p.id}`;
+          const currentDate = records[recKey] || '';
+          return `
               <td>
                 <input type="date" value="${currentDate}" 
                   onchange="updateRecordDate(${s.id}, ${p.id}, this.value)">
               </td>
             `;
-          }).join('')}
+        }).join('')}
         </tr>
       `).join('');
-    }
-  }
-
-  // --- STUDENT FUNCTIONS ---
-  function populateStudentDropdown() {
-    const select = document.getElementById('student-select');
-    select.innerHTML = '<option value="">-- Choose Name --</option>' + 
-      students.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
-  }
-
-  let pendingPrintRequest = null;
-
-  function requestPrintout(studentId, puzzleId) {
-    pendingPrintRequest = { studentId, puzzleId };
-    
-    // Reset modal to Step 1
-    document.getElementById('print-step-1').classList.remove('hidden');
-    document.getElementById('print-step-2').classList.add('hidden');
-    
-    openModal('print-check-modal');
-  }
-
-  function showPrintStep2() {
-    document.getElementById('print-step-1').classList.add('hidden');
-    document.getElementById('print-step-2').classList.remove('hidden');
-  }
-
-  function confirmPrintRequest() {
-    if (!pendingPrintRequest) return;
-    const { studentId, puzzleId } = pendingPrintRequest;
-    
-    const key = `${studentId}_${puzzleId}`;
-    const today = new Date().toLocaleDateString();
-    requests[key] = today;
-    saveData();
-    
-    closeModal('print-check-modal');
-    renderStudentDashboard();
-    pendingPrintRequest = null;
-  }
-
-  function renderStudentDashboard() {
-    const studentId = document.getElementById('student-select').value;
-    const sContainer = document.getElementById('student-puzzles-grouped-container');
-
-    if (!studentId) {
-      sContainer.innerHTML = '<p style="color:#64748b;">Please select your name above to view your puzzles.</p>';
-      return;
+      }
     }
 
-    // Filter puzzles: must be globally Available AND NOT completed by this student
-    const availablePuzzles = puzzles.filter(p => {
-      const isGloballyAvailable = p.available;
-      const isCompletedByStudent = records[`${studentId}_${p.id}`];
-      return isGloballyAvailable && !isCompletedByStudent;
-    });
-
-    if (availablePuzzles.length === 0) {
-      sContainer.innerHTML = '<p style="color:#64748b;">No puzzles currently available.</p>';
-      return;
+    // Export all local data to a downloadable JSON file
+    function exportData() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(localStorage));
+      const downloadAnchor = document.createElement('a');
+      const dateStamp = new Date().toISOString().slice(0, 10);
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `puzzle_tracker_backup_${dateStamp}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+    // Restore data from an uploaded JSON backup file
+    function importData(event) {
+      const file = event.target.files;
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const importedData = JSON.parse(e.target.result);
+          // Clear out old data first to guarantee a pure restore
+          localStorage.clear();
+          Object.keys(importedData).forEach(key => {
+            localStorage.setItem(key, importedData[key]);
+          });
+          alert("Data restored successfully!");
+          location.reload();
+        } catch (err) {
+          alert("Error importing file. Please make sure it is a valid backup file.");
+        }
+      };
+      reader.readAsText(file);
     }
 
-    const grouped = getPuzzlesBySource(availablePuzzles);
-    const sites = Object.keys(grouped).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+    // --- STUDENT FUNCTIONS ---
+    function populateStudentDropdown() {
+      const select = document.getElementById('student-select');
+      select.innerHTML = '<option value="">-- Choose Name --</option>' +
+        students.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+    }
 
-    sContainer.innerHTML = sites.map(site => `
+    let pendingPrintRequest = null;
+
+    function requestPrintout(studentId, puzzleId) {
+      pendingPrintRequest = {studentId, puzzleId};
+
+      // Reset modal to Step 1
+      document.getElementById('print-step-1').classList.remove('hidden');
+      document.getElementById('print-step-2').classList.add('hidden');
+
+      openModal('print-check-modal');
+    }
+
+    function showPrintStep2() {
+      document.getElementById('print-step-1').classList.add('hidden');
+      document.getElementById('print-step-2').classList.remove('hidden');
+    }
+
+    function confirmPrintRequest() {
+      if (!pendingPrintRequest) return;
+      const {studentId, puzzleId} = pendingPrintRequest;
+
+      const key = `${studentId}_${puzzleId}`;
+      const today = new Date().toLocaleDateString();
+      requests[key] = today;
+      saveData();
+
+      closeModal('print-check-modal');
+      renderStudentDashboard();
+      pendingPrintRequest = null;
+    }
+
+    function renderStudentDashboard() {
+      const studentId = document.getElementById('student-select').value;
+      const sContainer = document.getElementById('student-puzzles-grouped-container');
+
+      if (!studentId) {
+        sContainer.innerHTML = '<p style="color:#64748b;">Please select your name above to view your puzzles.</p>';
+        return;
+      }
+
+      // Filter puzzles: must be globally Available AND NOT completed by this student
+      const availablePuzzles = puzzles.filter(p => {
+        const isGloballyAvailable = p.available;
+        const isCompletedByStudent = records[`${studentId}_${p.id}`];
+        return isGloballyAvailable && !isCompletedByStudent;
+      });
+
+      if (availablePuzzles.length === 0) {
+        sContainer.innerHTML = '<p style="color:#64748b;">No puzzles currently available.</p>';
+        return;
+      }
+
+      const grouped = getPuzzlesBySource(availablePuzzles);
+      const sites = Object.keys(grouped).sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
+
+      sContainer.innerHTML = sites.map(site => `
       <details class="source-group">
         <summary class="source-title">🌐 ${site}</summary>
         <table>
           ...
           <tbody>
             ${grouped[site]
-              .slice()
-              .sort((a, b) => (a.title || '').localeCompare(b.title || '', undefined, { numeric: true, sensitivity: 'base' }))
-              .map(p => {
-              const reqKey = `${studentId}_${p.id}`;
-              const isRequested = requests[reqKey];
+          .slice()
+          .sort((a, b) => (a.title || '').localeCompare(b.title || '', undefined, {numeric: true, sensitivity: 'base'}))
+          .map(p => {
+            const reqKey = `${studentId}_${p.id}`;
+            const isRequested = requests[reqKey];
 
-              const requestCellHtml = isRequested
-                ? `<span class="badge badge-pending">Requested ⏳ (${isRequested})</span>`
-                : `<button class="btn-req" onclick="requestPrintout(${studentId}, ${p.id})">Request Printout 🖨️</button>`;
+            const requestCellHtml = isRequested
+              ? `<span class="badge badge-pending">Requested ⏳ (${isRequested})</span>`
+              : `<button class="btn-req" onclick="requestPrintout(${studentId}, ${p.id})">Request Printout 🖨️</button>`;
 
-              return `
+            return `
                 <tr>
                   <td><strong>${p.title}</strong></td>
                   <td>${requestCellHtml}</td>
                   <td><span class="badge badge-unavail">Not Submitted</span></td>
                 </tr>
               `;
-            }).join('')}
+          }).join('')}
           </tbody>
         </table>
       </details>
     `).join('');
-  }
+    }
 
-  updateViewUI();
-</script>
+    updateViewUI();
+  </script>
 
 </body>
+
 </html>
