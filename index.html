@@ -516,8 +516,19 @@
     // Initialize Supabase client
     const SUPABASE_URL = 'https://pnpudjetvfshnmysynmn.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBucHVkamV0dmZzaG5teXN5bm1uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTY5MTksImV4cCI6MjEwMjgzMjkxOX0._XLKuDsEg3OUyJ0fGIQbsvvcLUG3GBvJtUR3tcuwt5M';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    // Initialize empty global state containers (will populate during loadData)
+
+    // Safely initialize the client so the page won't crash if the Supabase library is blocked
+    // Named supabaseClient (not "supabase") to avoid colliding with the global window.supabase namespace
+    let supabaseClient = null;
+    if (window.supabase) {
+      try {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      } catch (err) {
+        console.error("Failed to initialize Supabase client:", err);
+      }
+    } else {
+      console.warn("Supabase library failed to load (blocked by network or adblocker). Running in offline/localStorage mode.");
+    }    // Initialize empty global state containers (will populate during loadData)
     let puzzles = [];
     let students = [];
     let records = {};
@@ -528,14 +539,21 @@
 
     // 1. Load all data from Supabase on startup
     async function loadData() {
+      // If Supabase is blocked or failed to initialize, load local storage immediately
+      if (!supabaseClient) {
+        console.log("Supabase is not initialized. Using local storage.");
+        loadLocalStorageFallback();
+        updateViewUI();
+        return;
+      }
+
       try {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
           .from('tracker_state')
           .select('state')
           .eq('id', 1)
           .single();
 
-        // Check if it's a real error (PGRST116 means the table is currently empty)
         if (error && error.code !== 'PGRST116') {
           throw error;
         }
@@ -557,7 +575,6 @@
         loadLocalStorageFallback();
       }
 
-      // Once data is loaded (either from Supabase or fallback), render the UI
       updateViewUI();
     }
 
@@ -572,14 +589,19 @@
 
     // 2. Save the bundled state object to Supabase
     async function saveData() {
-      // Always keep LocalStorage updated as a ultra-fast local cache
+      // Always keep LocalStorage updated as an ultra-fast local cache
       localStorage.setItem('puzzles', JSON.stringify(puzzles));
       localStorage.setItem('students', JSON.stringify(students));
       localStorage.setItem('records', JSON.stringify(records));
       localStorage.setItem('requests', JSON.stringify(requests));
       localStorage.setItem('teacherPassword', teacherPassword);
 
-      // Bundle all tracking keys into a single master state object
+      // If Supabase is offline or blocked, skip the cloud upload safely
+      if (!supabaseClient) {
+        console.log("Saved locally. Supabase connection is unavailable.");
+        return;
+      }
+
       const stateBundle = {
         puzzles,
         students,
@@ -588,8 +610,7 @@
         teacherPassword
       };
 
-      // Upsert the row in your database table
-      const { error } = await supabase
+      const { error } = await supabaseClient
         .from('tracker_state')
         .upsert({ id: 1, state: stateBundle });
 

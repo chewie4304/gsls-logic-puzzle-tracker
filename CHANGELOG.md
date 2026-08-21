@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.1] - 2026-08-20
+### Fixed
+- Fixed a global variable naming collision (`supabase` vs. the CDN-provided `window.supabase`) that threw a `SyntaxError` on page load, silently aborting the entire script. This was breaking the "Switch View" and "Forgot Password?" buttons, and preventing any data from loading or saving. The client variable was renamed to `supabaseClient` throughout.
+
 ## [1.0.0] - 2026-08-20
 ### Added
 - Initial official release of the application.
