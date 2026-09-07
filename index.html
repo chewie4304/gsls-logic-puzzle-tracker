@@ -992,7 +992,7 @@
       } else {
         pContainer.innerHTML = sites.map(site => `
         <details class="source-group">
-          <summary class="source-title">🌐 Source: ${site} (${grouped[site].length})</summary>
+          <summary class="source-title">${site} (${grouped[site].length})</summary>
           <table>
             <thead>
               <tr>
@@ -1165,7 +1165,7 @@
 
       sContainer.innerHTML = sites.map(site => `
       <details class="source-group">
-        <summary class="source-title">🌐 ${site}</summary>
+        <summary class="source-title">${site}</summary>
         <table>
           ...
           <tbody>
