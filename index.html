@@ -589,7 +589,14 @@
 
     // 2. Save the bundled state object to Supabase
     async function saveData() {
-      // Always keep LocalStorage updated as an ultra-fast local cache
+      // Safety check: Prevent saving if the local dataset is completely empty.
+      // This prevents an uninitialized screen from overwriting your cloud database.
+      if (puzzles.length === 0 && students.length === 0) {
+        console.warn("Save aborted: Puzzles and Students arrays are empty. Preventing accidental overwrite.");
+        return;
+      }
+
+      // Always keep LocalStorage updated as a ultra-fast local cache
       localStorage.setItem('puzzles', JSON.stringify(puzzles));
       localStorage.setItem('students', JSON.stringify(students));
       localStorage.setItem('records', JSON.stringify(records));
