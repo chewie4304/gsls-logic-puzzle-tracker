@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.0.8] - 2026-09-09
+
+### Added
+- Source website submission cooldown rule preventing students from submitting puzzles from the same source in consecutive calendar weeks.
+
 ## [1.0.7] - 2026-09-09
 
 ### Changed

@@ -920,16 +920,6 @@
       }
     }
 
-    // Handles date submission from the Student View
-    function submitStudentPuzzle(studentId, puzzleId, inputId) {
-      const dateInput = document.getElementById(inputId);
-      if (!dateInput || !dateInput.value) {
-        showAlert("Select Date", "Please select a valid submission date.");
-        return;
-      }
-      updateRecordDate(studentId, puzzleId, dateInput.value);
-    }
-
     // Updates confirmed record date and clears any pending submission
     function updateRecordDate(studentId, puzzleId, dateValue) {
       const key = `${studentId}_${puzzleId}`;
@@ -943,15 +933,64 @@
       renderAllTeacherData();
     }
 
-    // Student submits puzzle for teacher grading
+    // Helper to calculate the difference in calendar weeks between two YYYY-MM-DD dates
+    function getStartOfWeek(dateStr) {
+      const date = new Date(dateStr + 'T00:00:00');
+      const day = date.getDay(); // 0 is Sunday
+      const diff = date.getDate() - day;
+      const startOfWeek = new Date(date.setDate(diff));
+      startOfWeek.setHours(0, 0, 0, 0);
+      return startOfWeek;
+    }
+
+    function getWeekDiff(dateStr1, dateStr2) {
+      const start1 = getStartOfWeek(dateStr1);
+      const start2 = getStartOfWeek(dateStr2);
+      const diffDays = Math.round((start1 - start2) / (1000 * 60 * 60 * 24));
+      return Math.abs(Math.round(diffDays / 7));
+    }
+
+    // Student submits puzzle for teacher grading with consecutive week source check
     function submitStudentPuzzle(studentId, puzzleId, inputId) {
       const dateInput = document.getElementById(inputId);
       if (!dateInput || !dateInput.value) {
         showAlert("Select Date", "Please select a valid submission date.");
         return;
       }
+
+      const newDateStr = dateInput.value;
+      const targetPuzzle = puzzles.find(p => p.id === puzzleId);
+      if (!targetPuzzle) return;
+
+      const targetSite = (targetPuzzle.site || '').trim().toLowerCase();
+
+      // Find all puzzle IDs belonging to the same source website
+      const sameSitePuzzleIds = new Set(
+        puzzles.filter(p => (p.site || '').trim().toLowerCase() === targetSite).map(p => p.id)
+      );
+
+      // Check student's confirmed and pending submissions for consecutive week conflicts
+      for (const pId of sameSitePuzzleIds) {
+        const recKey = `${studentId}_${pId}`;
+        const existingDate = records[recKey] || submissions[recKey];
+
+        if (existingDate) {
+          const weekDiff = getWeekDiff(newDateStr, existingDate);
+          if (weekDiff === 0 || weekDiff === 1) {
+            const matchingPuzzle = puzzles.find(p => p.id === pId);
+            const puzzleTitle = matchingPuzzle ? matchingPuzzle.title : 'a puzzle';
+
+            showAlert(
+              "Source Cooldown Warning ⚠️",
+              `Puzzles from "${targetPuzzle.site}" cannot be submitted in consecutive weeks. You submitted "${puzzleTitle}" on ${existingDate}. Please wait at least two weeks before submitting another puzzle from this source.`
+            );
+            return;
+          }
+        }
+      }
+
       const key = `${studentId}_${puzzleId}`;
-      submissions[key] = dateInput.value;
+      submissions[key] = newDateStr;
       saveData();
       renderStudentDashboard();
     }
