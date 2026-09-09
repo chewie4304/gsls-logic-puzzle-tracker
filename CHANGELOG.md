@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4] - 2026-09-09
+
+### Added
+- Two-step submission confirmation workflow between Student and Teacher views.
+- "Grade pending ⏳" badge and "Unsubmit ↩️" action button in Student Dashboard for pending puzzle submissions.
+- Teacher confirmation action in the Record Submissions matrix to approve pending student submissions before converting them to official "Submitted on [date]" records.
+
 ## [1.0.3] - 2026-09-09
 
 ### Added

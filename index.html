@@ -525,6 +525,14 @@
 
     let selectedStudentId = null;
     let supabaseClient = null;
+    let puzzles = [];
+    let students = [];
+    let records = {};
+    let requests = {};
+    let submissions = {}; // Stores student pending submissions
+    let teacherPassword = '1234';
+    let isTeacherMode = false;
+    let activeEditId = null;
 
     // Safely initialize the client so the page won't crash if the Supabase library is blocked
     // Named supabaseClient (not "supabase") to avoid colliding with the global window.supabase namespace
@@ -537,13 +545,6 @@
     } else {
       console.warn("Supabase library failed to load (blocked by network or adblocker). Running in offline/localStorage mode.");
     }    // Initialize empty global state containers (will populate during loadData)
-    let puzzles = [];
-    let students = [];
-    let records = {};
-    let requests = {};
-    let teacherPassword = '1234';
-    let isTeacherMode = false;
-    let activeEditId = null;
 
     // 1. Load all data from Supabase on startup
     async function loadData() {
@@ -572,6 +573,7 @@
           students = s.students || [];
           records = s.records || {};
           requests = s.requests || {};
+          submissions = s.submissions || {};
           teacherPassword = s.teacherPassword || '1234';
           console.log("Data successfully loaded from Supabase.");
         } else {
@@ -592,6 +594,7 @@
       students = JSON.parse(localStorage.getItem('students')) || [];
       records = JSON.parse(localStorage.getItem('records')) || {};
       requests = JSON.parse(localStorage.getItem('requests')) || {};
+      submissions = JSON.parse(localStorage.getItem('submissions')) || {};
       teacherPassword = localStorage.getItem('teacherPassword') || '1234';
     }
 
@@ -610,6 +613,7 @@
       localStorage.setItem('records', JSON.stringify(records));
       localStorage.setItem('requests', JSON.stringify(requests));
       localStorage.setItem('teacherPassword', teacherPassword);
+      localStorage.setItem('submissions', JSON.stringify(submissions));
 
       // If Supabase is offline or blocked, skip the cloud upload safely
       if (!supabaseClient) {
@@ -622,6 +626,7 @@
         students,
         records,
         requests,
+        submissions,
         teacherPassword
       };
 
@@ -923,6 +928,51 @@
       updateRecordDate(studentId, puzzleId, dateInput.value);
     }
 
+    // Updates confirmed record date and clears any pending submission
+    function updateRecordDate(studentId, puzzleId, dateValue) {
+      const key = `${studentId}_${puzzleId}`;
+      if (dateValue) {
+        records[key] = dateValue;
+      } else {
+        delete records[key];
+      }
+      delete submissions[key]; // Clear pending submission if manually updated or cleared
+      saveData();
+      renderAllTeacherData();
+    }
+
+    // Student submits puzzle for teacher grading
+    function submitStudentPuzzle(studentId, puzzleId, inputId) {
+      const dateInput = document.getElementById(inputId);
+      if (!dateInput || !dateInput.value) {
+        showAlert("Select Date", "Please select a valid submission date.");
+        return;
+      }
+      const key = `${studentId}_${puzzleId}`;
+      submissions[key] = dateInput.value;
+      saveData();
+      renderStudentDashboard();
+    }
+
+    // Student cancels pending submission
+    function unsubmitStudentPuzzle(studentId, puzzleId) {
+      const key = `${studentId}_${puzzleId}`;
+      delete submissions[key];
+      saveData();
+      renderStudentDashboard();
+    }
+
+    // Teacher confirms student submission
+    function confirmSubmission(studentId, puzzleId) {
+      const key = `${studentId}_${puzzleId}`;
+      const pendingDate = submissions[key];
+      if (pendingDate) {
+        records[key] = pendingDate;
+        delete submissions[key];
+        saveData();
+        renderAllTeacherData();
+      }
+    }
 
     function renderAllTeacherData() {
       // Safe & Alphabetized Auto-Complete for Source Website
@@ -1108,20 +1158,32 @@
         mBody.innerHTML = `<tr><td colspan="${filteredPuzzles.length + 1}" style="color:#64748b; font-style:italic;">No matching students found.</td></tr>`;
       } else {
         mBody.innerHTML = filteredStudents.map(s => `
-        <tr>
-          <td><strong>${s.name}</strong></td>
-          ${filteredPuzzles.map(p => {
+    <tr>
+      <td><strong>${s.name}</strong></td>
+      ${filteredPuzzles.map(p => {
           const recKey = `${s.id}_${p.id}`;
           const currentDate = records[recKey] || '';
+          const pendingDate = submissions[recKey];
+
+          if (!currentDate && pendingDate) {
+            return `
+            <td>
+              <div style="display:flex; flex-direction:column; gap:4px; align-items:flex-start;">
+                <span class="badge badge-pending" style="font-size:11px;">Pending: ${pendingDate}</span>
+                <button class="btn-add" style="padding:2px 6px; font-size:11px; margin:0;" onclick="confirmSubmission(${s.id}, ${p.id})">Confirm ✅</button>
+              </div>
+            </td>
+          `;
+          }
+
           return `
-              <td>
-                <input type="date" value="${currentDate}" 
-                  onchange="updateRecordDate(${s.id}, ${p.id}, this.value)">
-              </td>
-            `;
+          <td>
+            <input type="date" value="${currentDate}" onchange="updateRecordDate(${s.id}, ${p.id}, this.value)">
+          </td>
+        `;
         }).join('')}
-        </tr>
-      `).join('');
+    </tr>
+  `).join('');
       }
     }
 
@@ -1240,7 +1302,7 @@
 
     // 3. Renders assigned puzzles and submission controls using selectedStudentId
     function renderStudentDashboard() {
-      const studentId = selectedStudentId; // Reads from global search selection
+      const studentId = selectedStudentId;
       const sContainer = document.getElementById('student-puzzles-grouped-container');
 
       if (!studentId) {
@@ -1248,7 +1310,6 @@
         return;
       }
 
-      // Filter puzzles: globally Available
       const availablePuzzles = puzzles.filter(p => p.available);
 
       if (availablePuzzles.length === 0) {
@@ -1258,8 +1319,6 @@
 
       const grouped = getPuzzlesBySource(availablePuzzles);
       const sites = Object.keys(grouped).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
-
-      // Default date string (YYYY-MM-DD) for date picker
       const todayISO = new Date().toISOString().split('T');
 
       sContainer.innerHTML = sites.map(site => `
@@ -1279,20 +1338,22 @@
           .sort((a, b) => (a.title || '').localeCompare(b.title || '', undefined, { numeric: true, sensitivity: 'base' }))
           .map(p => {
             const recKey = `${studentId}_${p.id}`;
-            const subDate = records[recKey];
-            const reqKey = `${studentId}_${p.id}`;
-            const isRequested = requests[reqKey];
+            const confirmedDate = records[recKey];
+            const pendingDate = submissions[recKey];
+            const isRequested = requests[recKey];
 
             const requestCellHtml = isRequested
               ? `<span class="badge badge-pending">Requested ⏳ (${isRequested})</span>`
               : `<button class="btn-req" onclick="requestPrintout(${studentId}, ${p.id})">Request Printout 🖨️</button>`;
 
             let statusCellHtml = '';
-            if (subDate) {
+            if (confirmedDate) {
+              statusCellHtml = `<span class="badge badge-avail">Submitted on ${confirmedDate}</span>`;
+            } else if (pendingDate) {
               statusCellHtml = `
                   <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
-                    <span class="badge badge-avail">Submitted on ${subDate}</span>
-                    <button class="btn-action" onclick="updateRecordDate(${studentId}, ${p.id}, '')" title="Change or remove submission date" style="font-size:12px; color:#64748b;">✏️</button>
+                    <span class="badge badge-pending">Grade pending ⏳</span>
+                    <button class="btn-secondary" style="padding:3px 8px; font-size:12px; margin:0;" onclick="unsubmitStudentPuzzle(${studentId}, ${p.id})">Unsubmit ↩️</button>
                   </div>
                 `;
             } else {
