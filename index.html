@@ -1058,14 +1058,29 @@
       }
 
       const pContainer = document.getElementById('puzzles-grouped-container');
-      const grouped = getPuzzlesBySource(puzzles);
-      const sites = Object.keys(grouped).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+      if (pContainer) {
+        // 1. Capture currently expanded source group titles before re-rendering
+        const openTeacherSites = new Set();
+        pContainer.querySelectorAll('details.source-group[open]').forEach(details => {
+          const titleEl = details.querySelector('summary.source-title');
+          if (titleEl) {
+            // Strip out the trailing count suffix (e.g. "Krazy Dad (5)" -> "Krazy Dad")
+            const siteName = titleEl.textContent.replace(/\s*\\(\d+\\)$/, '').trim();
+            openTeacherSites.add(siteName);
+          }
+        });
 
-      if (sites.length === 0) {
-        pContainer.innerHTML = '<p style="color:#64748b; font-style:italic;">No puzzles added yet.</p>';
-      } else {
-        pContainer.innerHTML = sites.map(site => `
-        <details class="source-group">
+        const grouped = getPuzzlesBySource(puzzles);
+        const sites = Object.keys(grouped).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+
+        if (sites.length === 0) {
+          pContainer.innerHTML = '<p style="color:#64748b; font-style:italic;">No puzzles added yet.</p>';
+        } else {
+          pContainer.innerHTML = sites.map(site => {
+            const isOpen = openTeacherSites.has(site);
+
+            return `
+        <details class="source-group" ${isOpen ? 'open' : ''}>
           <summary class="source-title">${site} (${grouped[site].length})</summary>
           <table>
             <thead>
@@ -1078,31 +1093,33 @@
             </thead>
             <tbody>
               ${grouped[site]
-            .slice()
-            .sort((a, b) => (a.title || '').localeCompare(b.title || '', undefined, { numeric: true, sensitivity: 'base' }))
-            .map(p => `
-                <tr>
-                  <td><strong>${p.title}</strong></td>
-                  <td>
-                    <button onclick="togglePuzzleAvailability(${p.id})" class="badge ${p.available ? 'badge-avail' : 'badge-unavail'}">
-                      ${p.available ? 'Available' : 'Hidden'}
-                    </button>
-                  </td>
-                  <td>
-                    <a href="${p.url}" target="_blank">📄 Puzzle</a> | 
-                    <a href="${p.keyUrl}" target="_blank">🔑 Answer Key</a>
-                  </td>
-                  <td>
-                    <button class="btn-action" onclick="editPuzzle(${p.id})" title="Edit Puzzle">✏️ Edit</button>
-                    <button class="btn-action" onclick="duplicatePuzzle(${p.id})" title="Duplicate Puzzle">📋 Duplicate</button>
-                    <button class="btn-action" onclick="deletePuzzle(${p.id})" style="color:red;" title="Delete Puzzle">🗑️ Delete</button>
-                  </td>
-                </tr>
-              `).join('')}
+                .slice()
+                .sort((a, b) => (a.title || '').localeCompare(b.title || '', undefined, { numeric: true, sensitivity: 'base' }))
+                .map(p => `
+                  <tr>
+                    <td><strong>${p.title}</strong></td>
+                    <td>
+                      <button onclick="togglePuzzleAvailability(${p.id})" class="badge ${p.available ? 'badge-avail' : 'badge-unavail'}">
+                        ${p.available ? 'Available' : 'Hidden'}
+                      </button>
+                    </td>
+                    <td>
+                      <a href="${p.url}" target="_blank">📄 Puzzle</a> |
+                      <a href="${p.keyUrl}" target="_blank">🔑 Answer Key</a>
+                    </td>
+                    <td>
+                      <button class="btn-action" onclick="editPuzzle(${p.id})" title="Edit Puzzle">✏️ Edit</button>
+                      <button class="btn-action" onclick="duplicatePuzzle(${p.id})" title="Duplicate Puzzle">📋 Duplicate</button>
+                      <button class="btn-action" onclick="deletePuzzle(${p.id})" style="color:red;" title="Delete Puzzle">🗑️ Delete</button>
+                    </td>
+                  </tr>
+                `).join('')}
             </tbody>
           </table>
         </details>
-      `).join('');
+      `;
+          }).join('');
+        }
       }
 
       const sList = document.getElementById('students-list');

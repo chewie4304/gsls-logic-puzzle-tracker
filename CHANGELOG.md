@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.0.6] - 2026-09-09
+
+### Fixed
+- Preserved expanded state of source group accordions (`<details>`) in Teacher View when toggling puzzle availability, editing, or duplicating puzzles.
+
 ## [1.0.5] - 2026-09-09
 
 ### Fixed
