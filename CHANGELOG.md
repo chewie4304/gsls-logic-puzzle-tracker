@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.0.5] - 2026-09-09
+
+### Fixed
+- Preserved expanded state of source group accordions (`<details>`) during student puzzle submission and unsubmission actions in the Student Dashboard.
+
 ## [1.0.4] - 2026-09-09
 
 ### Added
