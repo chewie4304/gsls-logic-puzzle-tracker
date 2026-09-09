@@ -896,6 +896,7 @@
       renderAllTeacherData();
     }
 
+    // Updates submission records and refreshes the active view (Teacher or Student)
     function updateRecordDate(studentId, puzzleId, dateValue) {
       const key = `${studentId}_${puzzleId}`;
       if (dateValue) {
@@ -904,8 +905,24 @@
         delete records[key];
       }
       saveData();
-      renderAllTeacherData();
+
+      if (isTeacherMode) {
+        renderAllTeacherData();
+      } else {
+        renderStudentDashboard();
+      }
     }
+
+    // Handles date submission from the Student View
+    function submitStudentPuzzle(studentId, puzzleId, inputId) {
+      const dateInput = document.getElementById(inputId);
+      if (!dateInput || !dateInput.value) {
+        showAlert("Select Date", "Please select a valid submission date.");
+        return;
+      }
+      updateRecordDate(studentId, puzzleId, dateInput.value);
+    }
+
 
     function renderAllTeacherData() {
       // Safe & Alphabetized Auto-Complete for Source Website
@@ -1221,7 +1238,7 @@
       renderStudentDashboard();
     }
 
-    // 3. Renders assigned puzzles using selectedStudentId
+    // 3. Renders assigned puzzles and submission controls using selectedStudentId
     function renderStudentDashboard() {
       const studentId = selectedStudentId; // Reads from global search selection
       const sContainer = document.getElementById('student-puzzles-grouped-container');
@@ -1231,12 +1248,8 @@
         return;
       }
 
-      // Filter puzzles: globally Available AND NOT completed by this student
-      const availablePuzzles = puzzles.filter(p => {
-        const isGloballyAvailable = p.available;
-        const isCompletedByStudent = records[`${studentId}_${p.id}`];
-        return isGloballyAvailable && !isCompletedByStudent;
-      });
+      // Filter puzzles: globally Available
+      const availablePuzzles = puzzles.filter(p => p.available);
 
       if (availablePuzzles.length === 0) {
         sContainer.innerHTML = '<p style="color:#64748b;">No puzzles currently available.</p>';
@@ -1246,6 +1259,9 @@
       const grouped = getPuzzlesBySource(availablePuzzles);
       const sites = Object.keys(grouped).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
 
+      // Default date string (YYYY-MM-DD) for date picker
+      const todayISO = new Date().toISOString().split('T');
+
       sContainer.innerHTML = sites.map(site => `
     <details class="source-group">
       <summary class="source-title">${site}</summary>
@@ -1254,7 +1270,7 @@
           <tr>
             <th>Title</th>
             <th>Print Request</th>
-            <th>Status</th>
+            <th>Status / Submission</th>
           </tr>
         </thead>
         <tbody>
@@ -1262,17 +1278,37 @@
           .slice()
           .sort((a, b) => (a.title || '').localeCompare(b.title || '', undefined, { numeric: true, sensitivity: 'base' }))
           .map(p => {
+            const recKey = `${studentId}_${p.id}`;
+            const subDate = records[recKey];
             const reqKey = `${studentId}_${p.id}`;
             const isRequested = requests[reqKey];
+
             const requestCellHtml = isRequested
               ? `<span class="badge badge-pending">Requested ⏳ (${isRequested})</span>`
               : `<button class="btn-req" onclick="requestPrintout(${studentId}, ${p.id})">Request Printout 🖨️</button>`;
+
+            let statusCellHtml = '';
+            if (subDate) {
+              statusCellHtml = `
+                  <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                    <span class="badge badge-avail">Submitted on ${subDate}</span>
+                    <button class="btn-action" onclick="updateRecordDate(${studentId}, ${p.id}, '')" title="Change or remove submission date" style="font-size:12px; color:#64748b;">✏️</button>
+                  </div>
+                `;
+            } else {
+              statusCellHtml = `
+                  <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+                    <input type="date" id="sub-date-${p.id}" value="${todayISO}" style="padding:4px 6px; font-size:12px;">
+                    <button class="btn-add" style="padding:4px 8px; font-size:12px; margin:0;" onclick="submitStudentPuzzle(${studentId}, ${p.id}, 'sub-date-${p.id}')">Submit 📝</button>
+                  </div>
+                `;
+            }
 
             return `
                 <tr>
                   <td><strong>${p.title}</strong></td>
                   <td>${requestCellHtml}</td>
-                  <td><span class="badge badge-unavail">Not Submitted</span></td>
+                  <td>${statusCellHtml}</td>
                 </tr>
               `;
           }).join('')}

@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.3] - 2026-09-09
+
+### Added
+- Direct puzzle submission functionality in the Student Dashboard, allowing students to select a submission date and submit completed puzzles [1, 2].
+- Dynamic "Submitted on [date]" badges with edit controls in the Student View, keeping completed puzzles visible rather than hiding them [2, 3].
+
+### Changed
+- Refactored `updateRecordDate()` and added `submitStudentPuzzle()` to instantly sync student-entered submission dates with both the Teacher Mode matrix and Supabase [4].
+
 ## [1.0.2] - 2026-09-09
 
 ### Added
