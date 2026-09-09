@@ -385,10 +385,12 @@
     <div id="student-view">
       <div class="card">
         <h2>Student Dashboard</h2>
-        <label for="student-select"><strong>Select Your Name: </strong></label>
-        <select id="student-select" onchange="renderStudentDashboard()">
-          <option value="">-- Choose Name --</option>
-        </select>
+        <label for="student-search-input"><strong>Type Your Name: </strong></label>
+        <div style="margin-top: 8px; max-width: 400px;">
+          <input type="text" id="student-search-input" placeholder="Type name here..." oninput="handleStudentSearch()"
+            style="width: 100%; box-sizing: border-box;">
+        </div>
+        <div id="student-search-results" style="margin-top: 12px;"></div>
       </div>
 
       <div class="card">
@@ -517,9 +519,15 @@
     const SUPABASE_URL = 'https://pnpudjetvfshnmysynmn.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBucHVkamV0dmZzaG5teXN5bm1uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTY5MTksImV4cCI6MjEwMjgzMjkxOX0._XLKuDsEg3OUyJ0fGIQbsvvcLUG3GBvJtUR3tcuwt5M';
 
+    // ====================================
+    // --- GLOBAL VARIABLES & STATE ---
+    // ====================================
+
+    let selectedStudentId = null;
+    let supabaseClient = null;
+
     // Safely initialize the client so the page won't crash if the Supabase library is blocked
     // Named supabaseClient (not "supabase") to avoid colliding with the global window.supabase namespace
-    let supabaseClient = null;
     if (window.supabase) {
       try {
         supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -733,8 +741,7 @@
       document.getElementById('forgot-btn').classList.toggle('hidden', isTeacherMode);
 
       if (!isTeacherMode) {
-        populateStudentDropdown();
-        renderStudentDashboard();
+        handleStudentSearch();
       } else {
         renderAllTeacherData();
       }
@@ -1101,11 +1108,178 @@
       }
     }
 
-    // --- STUDENT FUNCTIONS ---
-    function populateStudentDropdown() {
-      const select = document.getElementById('student-select');
-      select.innerHTML = '<option value="">-- Choose Name --</option>' +
-        students.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+    // ====================================
+    // --- STUDENT SEARCH FUNCTIONS ---
+    // ====================================
+
+    function handleStudentSearch() {
+      const input = document.getElementById('student-search-input');
+      const resultsContainer = document.getElementById('student-search-results');
+      if (!input || !resultsContainer) return;
+
+      const query = input.value.trim().toLowerCase();
+
+      // 1. Empty Input
+      if (!query) {
+        selectedStudentId = null;
+        resultsContainer.innerHTML = '<p style="color:#64748b; font-style:italic; margin:0;">Type your name above to view your assigned puzzles.</p>';
+        renderStudentDashboard();
+        return;
+      }
+
+      // Filter students array for matches
+      const matches = students.filter(s => (s.name || '').toLowerCase().includes(query));
+
+      // 2. No Matches Found
+      if (matches.length === 0) {
+        selectedStudentId = null;
+        resultsContainer.innerHTML = '<p style="color:var(--danger); font-weight:bold; margin:0;">⚠️ No student found. Please check your spelling.</p>';
+        renderStudentDashboard();
+      }
+      // 3. Exactly 1 Match Found
+      else if (matches.length === 1) {
+        const student = matches; // <---  retrieves the student object from the array
+        selectedStudentId = student.id;
+        resultsContainer.innerHTML = `<p style="color:var(--success); font-weight:bold; margin:0;">✅ Showing puzzles for <strong>${student.name}</strong></p>`;
+        renderStudentDashboard();
+      }
+      // 4. Multiple Matches Found
+      else {
+        selectedStudentId = null;
+        resultsContainer.innerHTML = `
+      <p style="color:var(--warning); font-weight:bold; margin:0 0 8px 0;">🔍 Multiple students found. Please click your name:</p>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        ${matches.map(s => `
+          <button type="button" class="btn-secondary" style="margin:0;" onclick="selectStudent(${s.id}, '${s.name.replace(/'/g, "\\'")}')">
+            ${s.name}
+          </button>
+        `).join('')}
+      </div>
+    `;
+        renderStudentDashboard();
+      }
+    }
+
+    // 1. Handles the typed student search
+    function handleStudentSearch() {
+      const input = document.getElementById('student-search-input');
+      const resultsContainer = document.getElementById('student-search-results');
+      if (!input || !resultsContainer) return;
+
+      const query = input.value.trim().toLowerCase();
+
+      // Empty Input
+      if (!query) {
+        selectedStudentId = null;
+        resultsContainer.innerHTML = '<p style="color:#64748b; font-style:italic; margin:0;">Type your name above to view your assigned puzzles.</p>';
+        renderStudentDashboard();
+        return;
+      }
+
+      // Filter student array for matches
+      const matches = students.filter(s => (s.name || '').toLowerCase().includes(query));
+
+      // No Matches
+      if (matches.length === 0) {
+        selectedStudentId = null;
+        resultsContainer.innerHTML = '<p style="color:var(--danger); font-weight:bold; margin:0;">⚠️ No student found. Please check your spelling.</p>';
+        renderStudentDashboard();
+      }
+      // Exactly 1 Match Found
+      else if (matches.length === 1) {
+        const [student] = matches; // Unpacks the student object from the array cleanly
+        selectedStudentId = student.id;
+        resultsContainer.innerHTML = `<p style="color:var(--success); font-weight:bold; margin:0;">✅ Showing puzzles for <strong>${student.name}</strong></p>`;
+        renderStudentDashboard();
+      }
+      // Multiple Matches Found
+      else {
+        selectedStudentId = null;
+        resultsContainer.innerHTML = `
+      <p style="color:var(--warning); font-weight:bold; margin:0 0 8px 0;">🔍 Multiple students found. Please click your name:</p>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        ${matches.map(s => `
+          <button type="button" class="btn-secondary" style="margin:0;" onclick="selectStudent(${s.id}, '${s.name.replace(/'/g, "\\'")}')">
+            ${s.name}
+          </button>
+        `).join('')}
+      </div>
+    `;
+        renderStudentDashboard();
+      }
+    }
+
+    // 2. Handles clicking a name when multiple matches are found
+    function selectStudent(id, name) {
+      selectedStudentId = id;
+      const input = document.getElementById('student-search-input');
+      if (input) input.value = name;
+      const resultsContainer = document.getElementById('student-search-results');
+      if (resultsContainer) {
+        resultsContainer.innerHTML = `<p style="color:var(--success); font-weight:bold; margin:0;">✅ Showing puzzles for <strong>${name}</strong></p>`;
+      }
+      renderStudentDashboard();
+    }
+
+    // 3. Renders assigned puzzles using selectedStudentId
+    function renderStudentDashboard() {
+      const studentId = selectedStudentId; // Reads from global search selection
+      const sContainer = document.getElementById('student-puzzles-grouped-container');
+
+      if (!studentId) {
+        sContainer.innerHTML = '<p style="color:#64748b;">Please type or select your name above to view your puzzles.</p>';
+        return;
+      }
+
+      // Filter puzzles: globally Available AND NOT completed by this student
+      const availablePuzzles = puzzles.filter(p => {
+        const isGloballyAvailable = p.available;
+        const isCompletedByStudent = records[`${studentId}_${p.id}`];
+        return isGloballyAvailable && !isCompletedByStudent;
+      });
+
+      if (availablePuzzles.length === 0) {
+        sContainer.innerHTML = '<p style="color:#64748b;">No puzzles currently available.</p>';
+        return;
+      }
+
+      const grouped = getPuzzlesBySource(availablePuzzles);
+      const sites = Object.keys(grouped).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+
+      sContainer.innerHTML = sites.map(site => `
+    <details class="source-group">
+      <summary class="source-title">${site}</summary>
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Print Request</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${grouped[site]
+          .slice()
+          .sort((a, b) => (a.title || '').localeCompare(b.title || '', undefined, { numeric: true, sensitivity: 'base' }))
+          .map(p => {
+            const reqKey = `${studentId}_${p.id}`;
+            const isRequested = requests[reqKey];
+            const requestCellHtml = isRequested
+              ? `<span class="badge badge-pending">Requested ⏳ (${isRequested})</span>`
+              : `<button class="btn-req" onclick="requestPrintout(${studentId}, ${p.id})">Request Printout 🖨️</button>`;
+
+            return `
+                <tr>
+                  <td><strong>${p.title}</strong></td>
+                  <td>${requestCellHtml}</td>
+                  <td><span class="badge badge-unavail">Not Submitted</span></td>
+                </tr>
+              `;
+          }).join('')}
+        </tbody>
+      </table>
+    </details>
+  `).join('');
     }
 
     let pendingPrintRequest = null;
@@ -1137,61 +1311,6 @@
       closeModal('print-check-modal');
       renderStudentDashboard();
       pendingPrintRequest = null;
-    }
-
-    function renderStudentDashboard() {
-      const studentId = document.getElementById('student-select').value;
-      const sContainer = document.getElementById('student-puzzles-grouped-container');
-
-      if (!studentId) {
-        sContainer.innerHTML = '<p style="color:#64748b;">Please select your name above to view your puzzles.</p>';
-        return;
-      }
-
-      // Filter puzzles: must be globally Available AND NOT completed by this student
-      const availablePuzzles = puzzles.filter(p => {
-        const isGloballyAvailable = p.available;
-        const isCompletedByStudent = records[`${studentId}_${p.id}`];
-        return isGloballyAvailable && !isCompletedByStudent;
-      });
-
-      if (availablePuzzles.length === 0) {
-        sContainer.innerHTML = '<p style="color:#64748b;">No puzzles currently available.</p>';
-        return;
-      }
-
-      const grouped = getPuzzlesBySource(availablePuzzles);
-      const sites = Object.keys(grouped).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
-
-      sContainer.innerHTML = sites.map(site => `
-      <details class="source-group">
-        <summary class="source-title">${site}</summary>
-        <table>
-          ...
-          <tbody>
-            ${grouped[site]
-          .slice()
-          .sort((a, b) => (a.title || '').localeCompare(b.title || '', undefined, { numeric: true, sensitivity: 'base' }))
-          .map(p => {
-            const reqKey = `${studentId}_${p.id}`;
-            const isRequested = requests[reqKey];
-
-            const requestCellHtml = isRequested
-              ? `<span class="badge badge-pending">Requested ⏳ (${isRequested})</span>`
-              : `<button class="btn-req" onclick="requestPrintout(${studentId}, ${p.id})">Request Printout 🖨️</button>`;
-
-            return `
-                <tr>
-                  <td><strong>${p.title}</strong></td>
-                  <td>${requestCellHtml}</td>
-                  <td><span class="badge badge-unavail">Not Submitted</span></td>
-                </tr>
-              `;
-          }).join('')}
-          </tbody>
-        </table>
-      </details>
-    `).join('');
     }
 
     // Start the app by pulling data from Supabase

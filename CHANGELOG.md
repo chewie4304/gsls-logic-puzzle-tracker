@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.2] - 2026-09-09
+
+### Added
+- Replaced the student selection dropdown with an interactive typed search input in the Student Dashboard, featuring real-time filtering, auto-selection on single match, choice buttons on multiple matches, and spelling verification prompts.
+
+### Changed
+- Simplified accordion group section headers across both Teacher and Student views by removing the "🌐 Source:" and "🌐" text prefixes for a cleaner interface.
+
+### Fixed
+- Fixed a global variable collision (`supabase` vs. `window.supabase`) by renaming the client to `supabaseClient` and adding safe initialization wrappers to prevent page crashes when CDN libraries are blocked.
+- Fixed a rendering bug where matching a student search query displayed "undefined" by properly destructuring filtered result objects.
+- Added a safety check in `saveData()` to prevent an uninitialized empty dataset from accidentally overwriting live cloud database records in Supabase.
+
 ## [1.0.1] - 2026-08-20
 ### Fixed
 - Fixed a global variable naming collision (`supabase` vs. the CDN-provided `window.supabase`) that threw a `SyntaxError` on page load, silently aborting the entire script. This was breaking the "Switch View" and "Forgot Password?" buttons, and preventing any data from loading or saving. The client variable was renamed to `supabaseClient` throughout.
