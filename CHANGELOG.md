@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.0.7] - 2026-09-09
+
+### Changed
+- Converted student search to require explicit submission (pressing Enter or clicking "Find Puzzles 🔍") before matching or displaying student names, preventing accidental selections while typing.
+
 ## [1.0.6] - 2026-09-09
 
 ### Fixed

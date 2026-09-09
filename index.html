@@ -386,10 +386,12 @@
       <div class="card">
         <h2>Student Dashboard</h2>
         <label for="student-search-input"><strong>Type Your Name: </strong></label>
-        <div style="margin-top: 8px; max-width: 400px;">
-          <input type="text" id="student-search-input" placeholder="Type name here..." oninput="handleStudentSearch()"
-            style="width: 100%; box-sizing: border-box;">
-        </div>
+        <form onsubmit="event.preventDefault(); handleStudentSearch();"
+          style="display: flex; gap: 8px; margin-top: 8px; max-width: 400px;">
+          <input type="text" id="student-search-input" placeholder="Type full name..."
+            style="flex: 1; box-sizing: border-box;">
+          <button type="submit" class="btn-req" style="margin: 0; white-space: nowrap;">Find Puzzles 🔍</button>
+        </form>
         <div id="student-search-results" style="margin-top: 12px;"></div>
       </div>
 
