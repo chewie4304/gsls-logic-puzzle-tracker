@@ -1211,12 +1211,18 @@
 
       // 4. Render Table Header
       if (filteredPuzzles.length === 0) {
-        mHead.innerHTML = `<tr><th>Student</th><th style="color:#64748b; font-style:italic;">No matching puzzles with entries</th></tr>`;
+        mHead.innerHTML = `<tr><th>Student</th><th style="color:#64748b; font-style:italic;">No matching puzzles</th></tr>`;
       } else {
         mHead.innerHTML = `
           <tr>
             <th>Student</th>
-            ${filteredPuzzles.map(p => `<th>${p.title}<br><small style="font-weight:normal; color:#64748b;">(${p.site})</small></th>`).join('')}
+            ${filteredPuzzles.map(p => `
+              <th>
+                <strong>\${p.title}</strong><br>
+                <small style="font-weight:normal; color:#64748b;">(\${p.site})</small><br>
+                <a href="\${p.keyUrl}" target="_blank" style="font-size:11px; font-weight:normal; text-decoration:underline; color:var(--primary);">🔑 Answer Key</a>
+              </th>
+            `).join('')}
           </tr>
         `;
       }
@@ -1236,12 +1242,12 @@
           <tr>
             <td><strong>${s.name}</strong></td>
             ${filteredPuzzles.map(p => {
-              const recKey = `${s.id}_${p.id}`;
-              const currentDate = records[recKey] || '';
-              const pendingDate = submissions[recKey];
+          const recKey = `${s.id}_${p.id}`;
+          const currentDate = records[recKey] || '';
+          const pendingDate = submissions[recKey];
 
-              if (!currentDate && pendingDate) {
-                return `
+          if (!currentDate && pendingDate) {
+            return `
                   <td>
                     <div style="display:flex; flex-direction:column; gap:4px; align-items:flex-start;">
                       <span class="badge badge-pending" style="font-size:11px;">Pending: \${pendingDate}</span>
@@ -1249,14 +1255,14 @@
                     </div>
                   </td>
                 `;
-              }
+          }
 
-              return `
+          return `
                 <td>
                   <input type="date" value="${currentDate}" onchange="updateRecordDate(${s.id}, ${p.id}, this.value)">
                 </td>
               `;
-            }).join('')}
+        }).join('')}
           </tr>
         `).join('');
       }

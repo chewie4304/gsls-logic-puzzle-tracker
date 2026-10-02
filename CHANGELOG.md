@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.1.0] - 2026-10-02
+
+### Added
+- Direct "🔑 Answer Key" links inside each puzzle column header in the Record Submissions matrix (Teacher View).
+
 ## [1.0.9] - 2026-10-02
 
 ### Changed
