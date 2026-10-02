@@ -1,13 +1,10 @@
 # Changelog
 
-<<<<<<< HEAD
 ## [1.0.9] - 2026-10-02
 
 ### Changed
 - Refined Teacher Mode student filtering in the Record Submissions matrix to show only puzzles with active entries (completed dates, pending submissions, or print requests) when a student search query is entered.
 
-=======
->>>>>>> 59f3d526771208bc16d447a1c9b1d0c6604bf09e
 ## [1.0.8] - 2026-09-09
 
 ### Added
