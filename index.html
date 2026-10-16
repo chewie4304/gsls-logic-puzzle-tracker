@@ -1207,6 +1207,21 @@
             return !!(records[key] || submissions[key] || requests[key]);
           })
         );
+
+        const getPuzzleSubmissionTime = puzzle => {
+          const dates = filteredStudents
+            .map(s => {
+              const key = `${s.id}_${puzzle.id}`;
+              return records[key] || submissions[key] || requests[key];
+            })
+            .filter(Boolean)
+            .map(date => Date.parse(date))
+            .filter(Number.isFinite);
+
+          return dates.length ? Math.min(...dates) : Infinity;
+        };
+
+        filteredPuzzles.sort((a, b) => getPuzzleSubmissionTime(a) - getPuzzleSubmissionTime(b));
       }
 
       // 4. Render Table Header
@@ -1250,7 +1265,7 @@
             return `
                   <td>
                     <div style="display:flex; flex-direction:column; gap:4px; align-items:flex-start;">
-                      <span class="badge badge-pending" style="font-size:11px;">Pending: ${pendingDate}</span>
+                      <span class="badge badge-pending" style="font-size:11px;">Pending: ` + pendingDate + `</span>
                       <button class="btn-add" style="padding:2px 6px; font-size:11px; margin:0;" onclick="confirmSubmission(${s.id}, ${p.id})">Confirm ✅</button>
                     </div>
                   </td>

@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.1] - 2026-10-15
+
+### Changed
+- Sort puzzle columns by submission date, oldest first, when filtering the Teacher View matrix by student.
+
+### Fixed
+- Display the actual pending submission date in the Teacher View matrix.
+
 ## [1.1.0] - 2026-10-02
 
 ### Added
