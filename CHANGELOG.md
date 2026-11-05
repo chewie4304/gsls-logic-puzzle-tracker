@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.2.0] - 2026-11-04
+
+### Changed
+- Restrict submission dates to Fridays to match Google Classroom due dates.
+- Replace the student submission date picker with a dropdown of Fridays (4 weeks back through 4 weeks ahead, defaulting to the upcoming Friday), with a note to ask the teacher for earlier dates.
+- Reject non-Friday dates entered by the teacher in the Record Submissions matrix.
+
+### Fixed
+- Student submission date default no longer uses an invalid value.
+
 ## [1.1.1] - 2026-10-15
 
 ### Changed

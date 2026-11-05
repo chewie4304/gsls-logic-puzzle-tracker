@@ -920,8 +920,38 @@
       }
     }
 
+    // Assignments are due on Fridays (Google Classroom), so only Fridays are valid dates
+    function isFriday(dateStr) {
+      return new Date(dateStr + 'T00:00:00').getDay() === 5;
+    }
+
+    function toLocalISO(d) {
+      const pad = n => String(n).padStart(2, '0');
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    }
+
+    // Fridays from 4 weeks back through 4 weeks ahead, plus the upcoming Friday as the default
+    function getFridayOptions() {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const nextFriday = new Date(today);
+      nextFriday.setDate(today.getDate() + ((5 - today.getDay() + 7) % 7));
+      const options = [];
+      for (let w = -4; w <= 4; w++) {
+        const d = new Date(nextFriday);
+        d.setDate(nextFriday.getDate() + w * 7);
+        options.push(toLocalISO(d));
+      }
+      return { options, defaultDate: toLocalISO(nextFriday) };
+    }
+
     // Updates confirmed record date and clears any pending submission
     function updateRecordDate(studentId, puzzleId, dateValue) {
+      if (dateValue && !isFriday(dateValue)) {
+        showAlert("Friday Only", "Submission dates must be a Friday to match the Google Classroom due date.");
+        renderAllTeacherData();
+        return;
+      }
       const key = `${studentId}_${puzzleId}`;
       if (dateValue) {
         records[key] = dateValue;
@@ -959,6 +989,10 @@
       }
 
       const newDateStr = dateInput.value;
+      if (!isFriday(newDateStr)) {
+        showAlert("Friday Only", "Submission dates must be a Friday to match the Google Classroom due date.");
+        return;
+      }
       const targetPuzzle = puzzles.find(p => p.id === puzzleId);
       if (!targetPuzzle) return;
 
@@ -1425,7 +1459,10 @@
 
       const grouped = getPuzzlesBySource(availablePuzzles);
       const sites = Object.keys(grouped).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
-      const todayISO = new Date().toISOString().split('T');
+      const { options: fridayOptions, defaultDate: defaultFriday } = getFridayOptions();
+      const fridayOptionsHtml = fridayOptions
+        .map(d => `<option value="${d}" ${d === defaultFriday ? 'selected' : ''}>${d}</option>`)
+        .join('');
 
       sContainer.innerHTML = sites.map(site => {
         // 2. Check if this source accordion was open before re-rendering
@@ -1469,8 +1506,9 @@
               } else {
                 statusCellHtml = `
                     <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
-                      <input type="date" id="sub-date-${p.id}" value="${todayISO}" style="padding:4px 6px; font-size:12px;">
+                      <select id="sub-date-${p.id}" title="Friday due dates only" style="padding:4px 6px; font-size:12px;">${fridayOptionsHtml}</select>
                       <button class="btn-add" style="padding:4px 8px; font-size:12px; margin:0;" onclick="submitStudentPuzzle(${studentId}, ${p.id}, 'sub-date-${p.id}')">Submit 📝</button>
+                      <div style="flex-basis:100%; font-size:11px; color:#666;">Need an earlier Friday? Ask your teacher to enter it.</div>
                     </div>
                   `;
               }
